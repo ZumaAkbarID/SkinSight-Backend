@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, column, computed, hasMany, hasOne } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  CamelCaseNamingStrategy,
+  column,
+  computed,
+  hasMany,
+  hasOne,
+} from '@adonisjs/lucid/orm'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import UserDetail from './user_detail.js'
 import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
@@ -8,6 +16,7 @@ import FaceScan from './face_scan.js'
 
 export default class User extends BaseModel {
   static selfAssignPrimaryKey = true
+  public static namingStrategy = new CamelCaseNamingStrategy()
 
   @column({ isPrimary: true })
   declare id: string
@@ -24,7 +33,7 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   declare password: string
 
-  @column.dateTime({ serializeAs: 'email_verified_at' })
+  @column.dateTime()
   declare emailVerifiedAt: DateTime | null
 
   @computed()

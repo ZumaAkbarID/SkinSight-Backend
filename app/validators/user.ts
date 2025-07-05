@@ -2,8 +2,8 @@ import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 
 export const updateProfileValidator = vine.compile(
   vine.object({
-    full_name: vine.string().minLength(3).maxLength(100).optional(),
-    profile_picture: vine
+    fullName: vine.string().minLength(3).maxLength(100).optional(),
+    profilePicture: vine
       .file({
         size: '5mb',
         extnames: ['jpg', 'jpeg', 'png', 'gif'],
@@ -13,8 +13,8 @@ export const updateProfileValidator = vine.compile(
 )
 
 const fields = {
-  full_name: 'Full Name',
-  profile_picture: 'Profile Picture',
+  fullName: 'Full Name',
+  profilePicture: 'Profile Picture',
 }
 
 const messages = {

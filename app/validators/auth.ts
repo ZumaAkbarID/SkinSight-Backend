@@ -3,13 +3,13 @@ import vine from '@vinejs/vine'
 
 export const registerUserValidator = vine.compile(
   vine.object({
-    full_name: vine.string().minLength(3).maxLength(100),
+    fullName: vine.string().minLength(3).maxLength(100),
     email: vine.string().email().unique({
       table: 'users',
       column: 'email',
     }),
     password: vine.string().minLength(8),
-    confirm_password: vine.string().minLength(8).sameAs('password'),
+    confirmPassword: vine.string().minLength(8).sameAs('password'),
   })
 )
 
@@ -23,10 +23,10 @@ const messages = {
 }
 
 const fields = {
-  full_name: 'Full Name',
+  fullName: 'Full Name',
   email: 'Email',
   password: 'Password',
-  confirm_password: 'Confirm Password',
+  confirmPassword: 'Confirm Password',
 }
 
 registerUserValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)

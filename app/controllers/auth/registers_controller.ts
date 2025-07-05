@@ -30,7 +30,7 @@ export default class RegistersController {
         await mail.use('brevo').send((message) => {
           message.to(payload.email).from(env.get('MAIL_FROM_EMAIL')).subject('OTP Verification')
             .html(`
-            <h1>Hi ${payload.full_name},</h1>
+            <h1>Hi ${payload.fullName},</h1>
             <p>Thank you for registering with SkinSight. Please use the following OTP to verify your email:</p>
             <p><strong>${otp}</strong></p>
             <p>This OTP is valid until ${expiresAt.toFormat('dd LLL yyyy HH:mm:ss')}.</p>
@@ -49,7 +49,7 @@ export default class RegistersController {
       }
 
       const user = await User.create({
-        fullName: payload.full_name,
+        fullName: payload.fullName,
         email: payload.email,
         password: newPassword,
         emailVerifiedAt: isValidated ? DateTime.now() : null,
@@ -60,15 +60,7 @@ export default class RegistersController {
       return response.status(201).json(
         successResponse(
           {
-            user: {
-              id: user.id,
-              full_name: user.fullName,
-              email: user.email,
-              profile_picture: user.profilePicture,
-              email_verified_at: user.emailVerifiedAt,
-              is_verified: user.isVerified,
-              is_assessment_completed: user.isAssessmentCompleted,
-            },
+            user,
             token: {
               type: 'Bearer',
               token: token.value!.release(),

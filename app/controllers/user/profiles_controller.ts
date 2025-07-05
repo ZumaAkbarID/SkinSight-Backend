@@ -8,22 +8,7 @@ export default class ProfilesController {
 
       await user.load('userDetail')
 
-      return response.json(
-        successResponse(
-          {
-            id: user.id,
-            full_name: user.fullName,
-            email: user.email,
-            profile_picture: user.profilePicture,
-            email_verified_at: user.emailVerifiedAt,
-            is_verified: user.isVerified,
-            is_assessment_completed: user.isAssessmentCompleted,
-            created_at: user.createdAt,
-            detail: user.userDetail,
-          },
-          'Profile data fetched'
-        )
-      )
+      return response.json(successResponse(user, 'Profile data fetched'))
     } catch (error) {
       return response.status(500).json(errorResponse('Internal server error'))
     }

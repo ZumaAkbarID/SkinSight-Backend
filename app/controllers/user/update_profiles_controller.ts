@@ -13,14 +13,15 @@ export default class UpdateProfilesController {
 
       const payload = await request.validateUsing(updateProfileValidator)
 
-      if (payload.full_name) {
-        user.fullName = payload.full_name
+      if (payload.fullName) {
+        user.fullName = payload.fullName
       }
 
-      if (payload.profile_picture) {
-        const ext = payload.profile_picture.extname
+      if (payload.profilePicture) {
+        const ext = payload.profilePicture.extname
         const newName = `${cuid()}.${ext}`
-        await payload.profile_picture.move(app.makePath('storage/profile_pictures'), {
+
+        await payload.profilePicture.move(app.makePath('uploads/profile_pictures'), {
           name: newName,
           overwrite: true,
         })
@@ -31,7 +32,7 @@ export default class UpdateProfilesController {
           user.profilePicture !== '/profile_pictures/male.jpg' &&
           user.profilePicture !== '/profile_pictures/female.jpg'
         ) {
-          fs.unlink(app.makePath('storage', user.profilePicture), () => {})
+          fs.unlink(app.makePath('uploads/profile_pictures', user.profilePicture), () => {})
         }
 
         user.profilePicture = router.builder().params([newName]).make('profilePictures')

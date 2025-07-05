@@ -55,7 +55,7 @@ export default class AssessmentController {
       }
 
       userDetail.gender = payload.gender
-      userDetail.dateOfBirth = DateTime.now().minus({ years: payload.age })
+      userDetail.dateOfBirth = DateTime.fromJSDate(payload.dateOfBirth)
       userDetail.skinType = skinType
 
       await userDetail.save()

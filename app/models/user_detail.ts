@@ -1,11 +1,19 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, belongsTo, column, computed } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  CamelCaseNamingStrategy,
+  column,
+  computed,
+} from '@adonisjs/lucid/orm'
 import User from './user.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { randomUUID } from 'node:crypto'
 
 export default class UserDetail extends BaseModel {
   static selfAssignPrimaryKey = true
+  public static namingStrategy = new CamelCaseNamingStrategy()
 
   @column({ isPrimary: true })
   declare id: string
@@ -16,26 +24,14 @@ export default class UserDetail extends BaseModel {
   @column()
   declare gender: string | null
 
-  @column.date({
-    serialize: (value) => (value ? value.toFormat('yyyy-MM-dd') : null),
-  })
+  @column.date()
   declare dateOfBirth: DateTime | null
 
   @computed()
   public get age() {
     if (!this.dateOfBirth) return null
 
-    const now = DateTime.now()
-    let age = now.year - this.dateOfBirth.year
-
-    // Check if birthday has occurred this year
-    if (
-      now.month < this.dateOfBirth.month ||
-      (now.month === this.dateOfBirth.month && now.day < this.dateOfBirth.day)
-    ) {
-      age--
-    }
-    return age
+    return Math.floor(DateTime.now().diff(this.dateOfBirth, 'years').years)
   }
 
   @column()

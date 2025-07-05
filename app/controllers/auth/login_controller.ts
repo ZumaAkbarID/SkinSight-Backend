@@ -29,15 +29,7 @@ export default class LoginController {
       return response.status(200).json(
         successResponse(
           {
-            user: {
-              id: user.id,
-              full_name: user.fullName,
-              email: user.email,
-              profile_picture: user.profilePicture,
-              email_verified_at: user.emailVerifiedAt,
-              is_verified: user.isVerified,
-              is_assessment_completed: user.isAssessmentCompleted,
-            },
+            user,
             token: {
               type: 'Bearer',
               token: token.value!.release(),

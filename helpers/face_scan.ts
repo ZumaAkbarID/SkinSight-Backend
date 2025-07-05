@@ -11,7 +11,7 @@ import env from '#start/env'
  */
 export async function processFaceScan(scanImage: any) {
   const newName = `${cuid()}.${scanImage.extname}`
-  const destPath = app.makePath('storage/scan_faces')
+  const destPath = app.makePath('uploads/scan_faces')
 
   await scanImage.move(destPath, {
     name: newName,
