@@ -1,0 +1,13 @@
+services:
+  skinsight_adonis:
+    build: .
+    container_name: skinsight_backend
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped

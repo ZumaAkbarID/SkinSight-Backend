@@ -1,5 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { errors as authErrors } from '@adonisjs/auth'
+import { errorResponse } from '#helpers/response'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -13,6 +15,18 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof authErrors.E_INVALID_CREDENTIALS) {
+      return ctx.response
+        .status(error.status)
+        .send(errorResponse('Invalid credentials', error.status))
+    }
+
+    if (error instanceof authErrors.E_UNAUTHORIZED_ACCESS) {
+      return ctx.response
+        .status(error.status)
+        .send(errorResponse('Unauthorized access', error.status))
+    }
+
     return super.handle(error, ctx)
   }
 

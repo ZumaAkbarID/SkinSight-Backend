@@ -29,7 +29,8 @@
     "#database/*": "./database/*.js",
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
-    "#config/*": "./config/*.js"
+    "#config/*": "./config/*.js",
+    "#helpers/*": "./helpers/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
@@ -55,7 +56,11 @@
     "@adonisjs/core": "^6.18.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^21.6.1",
+    "@adonisjs/mail": "^9.2.2",
     "@vinejs/vine": "^3.0.1",
+    "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
+    "form-data": "^4.0.3",
     "luxon": "^3.6.1",
     "mysql2": "^3.14.1",
     "reflect-metadata": "^0.2.2"

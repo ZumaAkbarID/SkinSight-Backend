@@ -1,18 +1,14 @@
 import { DateTime } from 'luxon'
-import hash from '@adonisjs/core/services/hash'
-import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
-import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import { BaseModel, beforeCreate, column, computed, hasMany, hasOne } from '@adonisjs/lucid/orm'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import UserDetail from './user_detail.js'
-import type { HasOne } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { randomUUID } from 'node:crypto'
+import FaceScan from './face_scan.js'
 
-const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
-  passwordColumnName: 'password',
-})
+export default class User extends BaseModel {
+  static selfAssignPrimaryKey = true
 
-export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
   declare id: string
 
@@ -28,11 +24,24 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
+  @column.dateTime({ serializeAs: 'email_verified_at' })
+  declare emailVerifiedAt: DateTime | null
+
+  @computed()
+  get isVerified(): boolean {
+    return !!this.emailVerifiedAt
+  }
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  @beforeCreate()
+  static assignUuid(user: User) {
+    user.id = randomUUID()
+  }
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {
     prefix: 'skinsight_',
@@ -43,4 +52,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasOne(() => UserDetail)
   declare userDetail: HasOne<typeof UserDetail>
+
+  @computed()
+  get isAssessmentCompleted(): boolean {
+    return !!this.userDetail
+  }
+
+  @hasMany(() => FaceScan)
+  declare faceScans: HasMany<typeof FaceScan>
 }
