@@ -7,7 +7,13 @@ services:
     env_file:
       - .env
     ports:
-      - '8080:8080'
+      - '9090:3333'
     volumes:
       - ./uploads:/app/uploads
     restart: unless-stopped
+    networks:
+      - skinsight-net
+
+networks:
+  skinsight-net:
+    external: true
