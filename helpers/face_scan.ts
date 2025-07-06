@@ -1,8 +1,8 @@
 import * as fs from 'node:fs'
 import app from '@adonisjs/core/services/app'
-import axios from 'axios'
+// import axios from 'axios'
 import { cuid } from '@adonisjs/core/helpers'
-import env from '#start/env'
+// import env from '#start/env'
 
 /**
  * Upload image ke storage, kirim ke ML API, dan return hasil ML + nama file
