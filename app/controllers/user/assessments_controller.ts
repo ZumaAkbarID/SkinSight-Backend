@@ -24,9 +24,8 @@ export default class AssessmentController {
         )
       }
 
+      let mlResult, fileName: string
       if (payload.scanImage) {
-        let mlResult, fileName: string
-
         try {
           const processed = await processFaceScan(payload.scanImage)
           mlResult = processed.ml
@@ -67,7 +66,15 @@ export default class AssessmentController {
 
       await user.save()
 
-      return response.json(successResponse(userDetail, 'Assessment submitted'))
+      return response.json(
+        successResponse(
+          {
+            assessmentData: userDetail,
+            scanResult: payload.scanImage ? mlResult : null,
+          },
+          'Assessment submitted'
+        )
+      )
     } catch (error) {
       console.error('Assessment error:', error)
       if (error.messages) {
