@@ -3,7 +3,8 @@ import vine, { SimpleMessagesProvider } from '@vinejs/vine'
 export const fillAssessmentValidator = vine.compile(
   vine.object({
     gender: vine.string().toLowerCase().in(['male', 'female', 'other']),
-    dateOfBirth: vine.date(),
+    // dateOfBirth: vine.date(),
+    age: vine.number().min(1).max(120),
     scanImage: vine
       .file({
         size: '15mb',
@@ -23,6 +24,7 @@ const fields = {
   dateOfBirth: 'Date of Birth',
   scanImage: 'Scan Image',
   skinType: 'Skin Type',
+  age: 'Age',
 }
 
 const messages = {

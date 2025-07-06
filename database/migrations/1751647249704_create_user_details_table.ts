@@ -8,7 +8,8 @@ export default class extends BaseSchema {
       table.uuid('id').primary().notNullable()
       table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE')
       table.enum('gender', ['male', 'female', 'other'])
-      table.date('date_of_birth')
+      // table.date('date_of_birth')
+      table.integer('age').unsigned()
       table.string('skin_type', 50)
 
       table.timestamp('created_at')

@@ -5,7 +5,6 @@ import {
   belongsTo,
   CamelCaseNamingStrategy,
   column,
-  computed,
 } from '@adonisjs/lucid/orm'
 import User from './user.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
@@ -24,15 +23,18 @@ export default class UserDetail extends BaseModel {
   @column()
   declare gender: string | null
 
-  @column.date()
-  declare dateOfBirth: DateTime | null
+  // @column.date()
+  // declare dateOfBirth: DateTime | null
 
-  @computed()
-  public get age() {
-    if (!this.dateOfBirth) return null
+  @column()
+  declare age: number | null
 
-    return Math.floor(DateTime.now().diff(this.dateOfBirth, 'years').years)
-  }
+  // @computed()
+  // public get age() {
+  //   if (!this.dateOfBirth) return null
+
+  //   return Math.floor(DateTime.now().diff(this.dateOfBirth, 'years').years)
+  // }
 
   @column()
   declare skinType: string | null
