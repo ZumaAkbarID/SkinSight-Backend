@@ -70,14 +70,7 @@ export default class AssessmentController {
         successResponse(
           {
             assessmentData: userDetail,
-            scanResult: payload.scanImage
-              ? {
-                  dry: 0.2,
-                  oily: 0.5,
-                  normal: 0.3,
-                  predicted_label: 'oily',
-                }
-              : null,
+            scanResult: payload.scanImage ? mlResult : null,
           },
           'Assessment submitted'
         )
