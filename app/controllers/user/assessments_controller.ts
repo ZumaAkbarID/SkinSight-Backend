@@ -25,12 +25,21 @@ export default class AssessmentController {
         )
       }
 
-      let mlResult, fileName: string
+      let status: boolean,
+        message: string,
+        mlResult,
+        fileName: string | null = null
       if (payload.scanImage) {
         try {
           const processed = await processFaceScan(payload.scanImage)
+          status = processed.status
+          message = processed.message
           mlResult = processed.ml
           fileName = processed.fileName
+
+          if (!status) {
+            return response.status(400).json(errorResponse(message, 400, mlResult))
+          }
         } catch (err) {
           return response.status(400).json(errorResponse(err.message, 400))
         }

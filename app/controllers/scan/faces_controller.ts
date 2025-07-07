@@ -13,7 +13,11 @@ export default class FacesController {
     const payload = await request.validateUsing(scanFaceValidator)
 
     try {
-      const { ml, fileName } = await processFaceScan(payload.scanImage)
+      const { status, message, ml, fileName } = await processFaceScan(payload.scanImage)
+
+      if (!status) {
+        return response.status(400).json(errorResponse(message, 400, ml))
+      }
 
       await FaceScan.create({
         userId: user.id,
