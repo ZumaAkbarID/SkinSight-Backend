@@ -20,12 +20,12 @@ export async function processFaceScan(scanImage: any) {
 
   const FormData = (await import('form-data')).default
   const formData = new FormData()
-  formData.append('image_path', fs.createReadStream(`${destPath}/${newName}`), newName)
+  formData.append('file', fs.createReadStream(`${destPath}/${newName}`), newName)
 
   let apiRes: any
 
   if (!env.get('BYPASS_FACE_SCAN')) {
-    apiRes = await axios.post(`${env.get('ML_URL')}/predict`, formData, {
+    apiRes = await axios.post(`${env.get('ML_URL')}/predict-skin`, formData, {
       headers: formData.getHeaders(),
     })
 
