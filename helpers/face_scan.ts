@@ -51,8 +51,6 @@ export async function processFaceScan(scanImage: any) {
       headers: formData.getHeaders(),
     })
 
-    console.log('ML API response:', apiRes.data)
-
     if (!apiRes.data || !apiRes.data.predicted_label) {
       return {
         status: false,
@@ -69,6 +67,8 @@ export async function processFaceScan(scanImage: any) {
       fileName: newName,
     }
   } catch (err: any) {
+    console.error('Error saat menghubungi ML API:', err)
+
     const apiMessage = err.response?.data?.detail || 'Gagal menghubungi ML API'
 
     return {
