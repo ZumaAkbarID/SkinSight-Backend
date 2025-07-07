@@ -11,6 +11,7 @@ export const scanFaceValidator = vine.compile(
 
 export const scanIngredientValidator = vine.compile(
   vine.object({
+    productName: vine.string().maxLength(100),
     scanImage: vine.file({
       size: '15mb',
       extnames: ['jpg', 'jpeg', 'png'],

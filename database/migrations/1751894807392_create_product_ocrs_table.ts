@@ -7,6 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
       table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE')
+      table.string('product_name').notNullable()
       table.string('scan_image').notNullable()
       table.json('extracted_ingredients')
       table.json('harmful_ingredients_found')

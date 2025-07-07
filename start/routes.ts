@@ -19,6 +19,7 @@ import app from '@adonisjs/core/services/app'
 import UpdateProfilesController from '#controllers/user/update_profiles_controller'
 import FacesController from '#controllers/scan/faces_controller'
 import OcrIngredientsController from '#controllers/product/ocr_ingredients_controller'
+import RecommendationsController from '#controllers/product/recommendations_controller'
 
 router.get('/', async () => {
   return {
@@ -54,6 +55,12 @@ router
             router.post('ingredients', [OcrIngredientsController])
           })
           .prefix('scan')
+
+        router
+          .group(() => {
+            router.get('recommendation', [RecommendationsController])
+          })
+          .prefix('product')
       })
       .use(middleware.auth())
   })

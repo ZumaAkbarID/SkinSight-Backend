@@ -11,10 +11,10 @@ export default class OcrIngredientsController {
     const user = auth.user!
     await user.load('userDetail')
 
-    if (user.userDetail?.skinType === null) {
+    if (!user.userDetail || !user.userDetail.skinType) {
       return response
         .status(400)
-        .json(errorResponse('Please complete your profile before using this feature', 400))
+        .json(errorResponse('Please complete your assessment before using this feature', 400))
     }
 
     const payload = await request.validateUsing(scanIngredientValidator)
@@ -32,6 +32,7 @@ export default class OcrIngredientsController {
       const ocr = await ProductOcr.create({
         id: randomUUID(),
         userId: user.id,
+        productName: payload.productName,
         scanImage: router.builder().params([fileName]).make('ingredientsScan'),
         extractedIngredients: ml.extractedIngredients ?? [],
         harmfulIngredientsFound: ml.harmfulIngredientsFound ?? [],

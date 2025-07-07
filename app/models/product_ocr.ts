@@ -21,6 +21,9 @@ export default class ProductOcr extends BaseModel {
   declare userId: string
 
   @column()
+  declare productName: string
+
+  @column()
   declare scanImage: string
 
   @column({
