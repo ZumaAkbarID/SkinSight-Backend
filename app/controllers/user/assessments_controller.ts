@@ -6,6 +6,7 @@ import axios from 'axios'
 import router from '@adonisjs/core/services/router'
 import FaceScan from '#models/face_scan'
 import { processFaceScan } from '#helpers/face_scan'
+import env from '#start/env'
 
 export default class AssessmentController {
   async handle({ request, auth, response }: HttpContext) {
@@ -70,7 +71,16 @@ export default class AssessmentController {
         successResponse(
           {
             assessmentData: userDetail,
-            scanResult: payload.scanImage ? mlResult : null,
+            scanResult: payload.scanImage
+              ? env.get('BYPASS_FACE_SCAN')
+                ? {
+                    dry: 0.2,
+                    oily: 0.5,
+                    normal: 0.3,
+                    predicted_label: 'oily',
+                  }
+                : mlResult
+              : null,
           },
           'Assessment submitted'
         )

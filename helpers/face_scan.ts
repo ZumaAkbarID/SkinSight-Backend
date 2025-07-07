@@ -24,7 +24,7 @@ export async function processFaceScan(scanImage: any) {
 
   let apiRes: any
 
-  if (env.get('NODE_ENV') !== 'development') {
+  if (!env.get('BYPASS_FACE_SCAN')) {
     apiRes = await axios.post(`${env.get('ML_URL')}/predict`, formData, {
       headers: formData.getHeaders(),
     })
@@ -33,7 +33,7 @@ export async function processFaceScan(scanImage: any) {
       throw new Error('ML service failed')
     }
   } else {
-    // simulasi ML
+    // bypass
     apiRes = {
       data: {
         dry: 0.2,
