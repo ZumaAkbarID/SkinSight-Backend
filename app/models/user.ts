@@ -13,6 +13,7 @@ import UserDetail from './user_detail.js'
 import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import { randomUUID } from 'node:crypto'
 import FaceScan from './face_scan.js'
+import ProductOcr from './product_ocr.js'
 
 export default class User extends BaseModel {
   static selfAssignPrimaryKey = true
@@ -69,4 +70,7 @@ export default class User extends BaseModel {
 
   @hasMany(() => FaceScan)
   declare faceScans: HasMany<typeof FaceScan>
+
+  @hasMany(() => ProductOcr)
+  declare productOcr: HasMany<typeof ProductOcr>
 }

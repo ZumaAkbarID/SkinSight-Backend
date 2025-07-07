@@ -18,6 +18,7 @@ import { sep, normalize } from 'node:path'
 import app from '@adonisjs/core/services/app'
 import UpdateProfilesController from '#controllers/user/update_profiles_controller'
 import FacesController from '#controllers/scan/faces_controller'
+import OcrIngredientsController from '#controllers/product/ocr_ingredients_controller'
 
 router.get('/', async () => {
   return {
@@ -50,6 +51,7 @@ router
         router
           .group(() => {
             router.post('face', [FacesController])
+            router.post('ingredients', [OcrIngredientsController])
           })
           .prefix('scan')
       })
@@ -86,3 +88,17 @@ router
     return response.download(absolutePath)
   })
   .as('scanFaces')
+
+router
+  .get('/ingredients_ocr/*', ({ request, response }) => {
+    const filePath = request.param('*').join(sep)
+    const normalizedPath = normalize(filePath)
+
+    if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
+      return response.badRequest('Malformed path')
+    }
+
+    const absolutePath = app.makePath('uploads/ingredients_ocr', normalizedPath)
+    return response.download(absolutePath)
+  })
+  .as('ingredientsScan')

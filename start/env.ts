@@ -49,4 +49,5 @@ export default await Env.create(new URL('../', import.meta.url), {
   APP_URL: Env.schema.string(),
   ML_URL: Env.schema.string(),
   BYPASS_FACE_SCAN: Env.schema.boolean(),
+  BYPASS_INGREDIENTS_OCR: Env.schema.boolean(),
 })
