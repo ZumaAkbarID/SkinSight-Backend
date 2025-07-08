@@ -28,5 +28,5 @@ COPY --from=build /app/database/csv /app/database/csv
 COPY --from=build /app/build /
 EXPOSE 8080
 RUN pwd
-CMD ["node", "./build/bin/server.js"]
-
+RUN ls -al
+CMD ["node", "./bin/server.js"]
