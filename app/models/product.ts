@@ -1,0 +1,46 @@
+import { DateTime } from 'luxon'
+import { BaseModel, beforeCreate, CamelCaseNamingStrategy, column } from '@adonisjs/lucid/orm'
+import { randomUUID } from 'crypto'
+
+export default class Product extends BaseModel {
+  static selfAssignPrimaryKey = true
+  public static namingStrategy = new CamelCaseNamingStrategy()
+
+  @column({ isPrimary: true })
+  declare id: string
+
+  @column()
+  declare title: string
+
+  @column()
+  declare price: number
+
+  @column()
+  declare description: string
+
+  @column()
+  declare imageUrl: string
+
+  @column()
+  declare link: string
+
+  @column()
+  declare type: string
+
+  @column()
+  declare brand: string
+
+  @column()
+  declare ingredients: string
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+
+  @beforeCreate()
+  static assignId(product: Product) {
+    product.id = randomUUID()
+  }
+}
