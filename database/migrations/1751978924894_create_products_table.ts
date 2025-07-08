@@ -6,7 +6,7 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
-git ad
+
       table.string('title', 512)
       table.decimal('price', 15, 2)
       table.text('description')
