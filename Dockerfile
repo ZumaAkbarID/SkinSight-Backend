@@ -25,8 +25,6 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/database/csv /app/database/csv
-COPY --from=build /app/build /
+COPY --from=build /app/build /app
 EXPOSE 8080
-RUN pwd
-RUN ls -al
 CMD ["node", "./bin/server.js"]
