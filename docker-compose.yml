@@ -2,6 +2,8 @@ services:
   skinsight_adonis:
     build: .
     container_name: skinsight_backend
+    environment:
+      - NODE_ENV=production
     env_file:
       - .env.production.local
     ports:
