@@ -15,6 +15,7 @@ export default class RecommendationsController {
     // dummy product list (hardcoded)
     const products = [
       {
+        id: 'uuid-1',
         title: 'Avoskin Luminous Emultion Night Cream - Night ...',
         price: 'Rp109.000',
         description: 'Exp 08/2026 Avoskin Luminous Emulsion Night Cr...',
@@ -26,6 +27,7 @@ export default class RecommendationsController {
         ingredients: 'Aqua, Ethyl ascorbic acid, Ethylhexyl olivate, ...',
       },
       {
+        id: 'uuid-2',
         title: 'Avoskin Buy Rana or Ruby Lip Balm Free Cushion',
         price: 'Rp189.000',
         description: '1. Lip balm dari Avoskin dengan melted-butter...',
@@ -37,6 +39,7 @@ export default class RecommendationsController {
         ingredients: 'Ingredients tidak ditemukan.',
       },
       {
+        id: 'uuid-3',
         title: 'Lacoco Sunscreen Daily UV Counter SPF 50 PA+++',
         price: 'Rp79.000',
         description: 'Expired Date : 09/2027 Daily UV Counter SPF 50...',
@@ -48,6 +51,7 @@ export default class RecommendationsController {
         ingredients: '2% Niacinamide, Vit. C, Sunflower extract, dan ...',
       },
       {
+        id: 'uuid-4',
         title: 'Avoskin Perfect Hydrating Treatment Essence (P...',
         price: 'Rp149.000',
         description: 'EXPIRED DATE 01/2027 Avoskin Perfect Hydrating...',
@@ -59,6 +63,7 @@ export default class RecommendationsController {
         ingredients: 'Ingredients tidak ditemukan.',
       },
       {
+        id: 'uuid-5',
         title: 'Avoskin Miraculous Refining Serum - 30ml',
         price: 'Rp195.000',
         description: 'Exp Date : 08/2027 Miraculous Refining Serum F...',

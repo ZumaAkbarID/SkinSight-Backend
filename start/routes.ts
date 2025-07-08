@@ -20,6 +20,8 @@ import UpdateProfilesController from '#controllers/user/update_profiles_controll
 import FacesController from '#controllers/scan/faces_controller'
 import OcrIngredientsController from '#controllers/product/ocr_ingredients_controller'
 import RecommendationsController from '#controllers/product/recommendations_controller'
+import EducationsController from '#controllers/educations_controller'
+import AdsController from '#controllers/ads_controller'
 
 router.get('/', async () => {
   return {
@@ -58,9 +60,13 @@ router
 
         router
           .group(() => {
-            router.get('recommendation', [RecommendationsController])
+            router.get('recommendations', [RecommendationsController])
           })
           .prefix('product')
+
+        router.get('educations', [EducationsController])
+
+        router.get('ads', [AdsController])
       })
       .use(middleware.auth())
   })
