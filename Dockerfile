@@ -27,4 +27,6 @@ COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/database/csv /app/database/csv
 COPY --from=build /app/build /
 EXPOSE 8080
-CMD ["node", "./bin/server.js"]
+RUN pwd
+CMD ["node", "./build/bin/server.js"]
+
