@@ -69,7 +69,8 @@ router
 
         router
           .group(() => {
-            router.get('recommendations', [RecommendationsController])
+            router.get('recommendations', [RecommendationsController, 'recommendations'])
+            router.get('all', [RecommendationsController, 'all'])
           })
           .prefix('product')
 

@@ -1,8 +1,9 @@
 import { errorResponse, successResponse } from '#helpers/response'
+import Product from '#models/product'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class RecommendationsController {
-  async handle({ auth, response }: HttpContext) {
+  async recommendations({ auth, response }: HttpContext) {
     const user = auth.user!
     await user.load('userDetail')
 
@@ -12,72 +13,53 @@ export default class RecommendationsController {
         .json(errorResponse('Please complete your assessment before using this feature', 400))
     }
 
-    // dummy product list (hardcoded)
-    const products = [
-      {
-        id: 'uuid-1',
-        title: 'Avoskin Luminous Emultion Night Cream - Night ...',
-        price: 'Rp109.000',
-        description: 'Exp 08/2026 Avoskin Luminous Emulsion Night Cr...',
-        imageUrl:
-          'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2023/12/16/65b0ab1e-67c2-4e33-a6dc-2786c963baf6.jpg',
-        link: 'https://www.tokopedia.com/avoskinbandung/avoskin-luminous-emultion-night-cream-night-cream',
-        type: 'Krim Wajah',
-        brand: 'avoskin',
-        ingredients: 'Aqua, Ethyl ascorbic acid, Ethylhexyl olivate, ...',
-      },
-      {
-        id: 'uuid-2',
-        title: 'Avoskin Buy Rana or Ruby Lip Balm Free Cushion',
-        price: 'Rp189.000',
-        description: '1. Lip balm dari Avoskin dengan melted-butter...',
-        imageUrl:
-          'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2023/12/16/65b0ab1e-67c2-4e33-a6dc-2786c963baf6.jpg',
-        link: 'https://www.tokopedia.com/avoskinbandung/avoskin-buy-rana-or-ruby-lip-balm-free-cushion',
-        type: 'Buku Kecantikan',
-        brand: 'avoskin',
-        ingredients: 'Ingredients tidak ditemukan.',
-      },
-      {
-        id: 'uuid-3',
-        title: 'Lacoco Sunscreen Daily UV Counter SPF 50 PA+++',
-        price: 'Rp79.000',
-        description: 'Expired Date : 09/2027 Daily UV Counter SPF 50...',
-        imageUrl:
-          'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2023/12/16/65b0ab1e-67c2-4e33-a6dc-2786c963baf6.jpg',
-        link: 'https://www.tokopedia.com/avoskinbandung/lacoco-sunscreen-daily-uv-counter-spf-50-pa',
-        type: 'Sunblock wajah',
-        brand: 'avoskin',
-        ingredients: '2% Niacinamide, Vit. C, Sunflower extract, dan ...',
-      },
-      {
-        id: 'uuid-4',
-        title: 'Avoskin Perfect Hydrating Treatment Essence (P...',
-        price: 'Rp149.000',
-        description: 'EXPIRED DATE 01/2027 Avoskin Perfect Hydrating...',
-        imageUrl:
-          'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2023/12/16/65b0ab1e-67c2-4e33-a6dc-2786c963baf6.jpg',
-        link: 'https://www.tokopedia.com/avoskinbandung/avoskin-perfect-hydrating-treatment-essence',
-        type: 'Serum Wajah',
-        brand: 'avoskin',
-        ingredients: 'Ingredients tidak ditemukan.',
-      },
-      {
-        id: 'uuid-5',
-        title: 'Avoskin Miraculous Refining Serum - 30ml',
-        price: 'Rp195.000',
-        description: 'Exp Date : 08/2027 Miraculous Refining Serum F...',
-        imageUrl:
-          'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2023/12/16/65b0ab1e-67c2-4e33-a6dc-2786c963baf6.jpg',
-        link: 'https://www.tokopedia.com/avoskinbandung/avoskin-miraculous-refining-serum-30ml',
-        type: 'Serum Wajah',
-        brand: 'avoskin',
-        ingredients: 'Water, Propylene Glycol, Glycolic Acid, Niacin...',
-      },
-    ]
+    try {
+      const products = await Product.query().orderByRaw('RAND()').limit(5)
 
-    return response
-      .status(200)
-      .json(successResponse(products, 'Recommendations fetched successfully', 200))
+      return response
+        .status(200)
+        .json(successResponse(products, 'Recommendations fetched successfully', 200))
+    } catch (error) {
+      console.error('Error fetching recommendations:', error)
+      return response.status(500).json(errorResponse('Failed to fetch recommendations', 500))
+    }
+  }
+
+  async all({ auth, request, response }: HttpContext) {
+    const user = auth.user!
+    await user.load('userDetail')
+
+    if (!user.userDetail || !user.userDetail.skinType) {
+      return response
+        .status(400)
+        .json(errorResponse('Please complete your assessment before using this feature', 400))
+    }
+
+    try {
+      // Query params: sort (price|type|brand), type, brand
+      const sort = request.input('sort', 'price') // default sort by price
+      const type = request.input('type') // opsional
+      const brand = request.input('brand') // opsional
+
+      const page = request.input('page', 1)
+      const limit = 10
+
+      let query = Product.query()
+
+      if (type) query = query.where('type', type)
+      if (brand) query = query.where('brand', brand)
+      if (['price', 'type', 'brand'].includes(sort)) {
+        query = query.orderBy(sort, 'asc')
+      }
+
+      const products = (await query.paginate(page, limit)).toJSON()
+
+      return response
+        .status(200)
+        .json(successResponse(products, 'Recommendations fetched successfully', 200))
+    } catch (error) {
+      console.error('Error fetching all products:', error)
+      return response.status(500).json(errorResponse('Failed to fetch products', 500))
+    }
   }
 }
