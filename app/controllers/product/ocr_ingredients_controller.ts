@@ -29,6 +29,12 @@ export default class OcrIngredientsController {
         return response.status(400).json(errorResponse(message, 400, ml))
       }
 
+      if (ml.extractedIngredients[0] == 'Ingredients Tidak Ditemukan.') {
+        return response
+          .status(400)
+          .json(errorResponse('No ingredients found in the scan image', 400, ml))
+      }
+
       const ocr = await ProductOcr.create({
         id: randomUUID(),
         userId: user.id,

@@ -20,11 +20,12 @@ import UpdateProfilesController from '#controllers/user/update_profiles_controll
 import FacesController from '#controllers/scan/faces_controller'
 import OcrIngredientsController from '#controllers/product/ocr_ingredients_controller'
 import RecommendationsController from '#controllers/product/recommendations_controller'
-import EducationsController from '#controllers/educations_controller'
 import AdsController from '#controllers/ads_controller'
 import FaceHistoriesController from '#controllers/scan/face_histories_controller'
 import OcrIngredientsHistoriesController from '#controllers/product/ocr_ingredients_histories_controller'
 import OcrIngredientsHistoryDetailsController from '#controllers/product/ocr_ingredients_history_details_controller'
+import EducationsController from '#controllers/education/educations_controller'
+import EducationDetailsController from '#controllers/education/education_details_controller'
 
 router.get('/', async () => {
   return {
@@ -72,7 +73,12 @@ router
           })
           .prefix('product')
 
-        router.get('educations', [EducationsController])
+        router
+          .group(() => {
+            router.get('/', [EducationsController])
+            router.get('detail/:id', [EducationDetailsController])
+          })
+          .prefix('educations')
 
         router.get('ads', [AdsController])
       })
