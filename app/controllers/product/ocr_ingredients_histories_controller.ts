@@ -1,3 +1,4 @@
+import { errorResponse, successResponse } from '#helpers/response'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class OcrIngredientsHistoriesController {
@@ -18,17 +19,12 @@ export default class OcrIngredientsHistoriesController {
         )
         .orderBy('createdAt', 'desc')
 
-      return response.status(200).json({
-        status: 'success',
-        data: ocrHistories,
-        message: 'OCR ingredient histories retrieved successfully',
-      })
+      return response
+        .status(200)
+        .json(successResponse(ocrHistories, 'OCR ingredient histories retrieved successfully', 200))
     } catch (error) {
       console.error('Error retrieving OCR ingredient histories:', error)
-      return response.status(500).json({
-        status: 'error',
-        message: 'Internal server error',
-      })
+      return response.status(500).json(errorResponse('Internal server error', 500))
     }
   }
 }

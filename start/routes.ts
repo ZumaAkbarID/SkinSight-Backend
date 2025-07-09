@@ -24,6 +24,7 @@ import EducationsController from '#controllers/educations_controller'
 import AdsController from '#controllers/ads_controller'
 import FaceHistoriesController from '#controllers/scan/face_histories_controller'
 import OcrIngredientsHistoriesController from '#controllers/product/ocr_ingredients_histories_controller'
+import OcrIngredientsHistoryDetailsController from '#controllers/product/ocr_ingredients_history_details_controller'
 
 router.get('/', async () => {
   return {
@@ -61,6 +62,7 @@ router
             router.get('face/history', [FaceHistoriesController])
             router.post('ingredients', [OcrIngredientsController])
             router.get('ingredients/history', [OcrIngredientsHistoriesController])
+            router.get('ingredients/history/:id', [OcrIngredientsHistoryDetailsController])
           })
           .prefix('scan')
 
