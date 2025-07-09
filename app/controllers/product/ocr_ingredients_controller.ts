@@ -45,6 +45,7 @@ export default class OcrIngredientsController {
         successResponse(
           {
             ...ml,
+            productName: ocr.productName,
             scanImage: ocr.scanImage,
             id: ocr.id,
           },

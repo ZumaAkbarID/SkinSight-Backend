@@ -22,10 +22,14 @@ import OcrIngredientsController from '#controllers/product/ocr_ingredients_contr
 import RecommendationsController from '#controllers/product/recommendations_controller'
 import EducationsController from '#controllers/educations_controller'
 import AdsController from '#controllers/ads_controller'
+import FaceHistoriesController from '#controllers/scan/face_histories_controller'
+import OcrIngredientsHistoriesController from '#controllers/product/ocr_ingredients_histories_controller'
 
 router.get('/', async () => {
   return {
     hello: 'SkinSight Backend API',
+    adonisVersion: app.adonisVersion,
+    nodeVersion: process.version,
   }
 })
 
@@ -54,7 +58,9 @@ router
         router
           .group(() => {
             router.post('face', [FacesController])
+            router.get('face/history', [FaceHistoriesController])
             router.post('ingredients', [OcrIngredientsController])
+            router.get('ingredients/history', [OcrIngredientsHistoriesController])
           })
           .prefix('scan')
 

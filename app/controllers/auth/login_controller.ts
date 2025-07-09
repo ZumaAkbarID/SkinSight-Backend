@@ -4,7 +4,6 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import env from '#start/env'
 import hash from '@adonisjs/core/services/hash'
-import db from '@adonisjs/lucid/services/db'
 
 export default class LoginController {
   async handle({ request, response }: HttpContext) {
@@ -22,7 +21,7 @@ export default class LoginController {
         return response.status(401).json(errorResponse('Email or password not found'))
       }
 
-      await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
+      // await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
 
       const token = await User.accessTokens.create(user)
 
