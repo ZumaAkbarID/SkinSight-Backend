@@ -77,7 +77,7 @@ router
         router
           .group(() => {
             router.get('/', [EducationsController])
-            router.get('detail/:id', [EducationDetailsController])
+            router.get('/:id', [EducationDetailsController])
           })
           .prefix('educations')
 
