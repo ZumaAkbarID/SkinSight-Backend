@@ -48,7 +48,7 @@ export default class User extends BaseModel {
   declare profilePicture: string | null
 
   @column({ serializeAs: null })
-  declare password: string
+  declare password: string | null
 
   @column.dateTime()
   declare emailVerifiedAt: DateTime | null

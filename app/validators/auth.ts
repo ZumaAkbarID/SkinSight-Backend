@@ -45,3 +45,9 @@ export const verifyOtpValidator = vine.compile(
     otp: vine.string().minLength(5).maxLength(5),
   })
 )
+
+export const oauth2GoogleValidator = vine.compile(
+  vine.object({
+    idToken: vine.string(),
+  })
+)

@@ -28,6 +28,7 @@ import EducationsController from '#controllers/education/educations_controller'
 import EducationDetailsController from '#controllers/education/education_details_controller'
 import VerifiesController from '#controllers/auth/verifies_controller'
 import { throttle } from '#start/limiter'
+import GooglesController from '#controllers/auth/googles_controller'
 
 router
   .get('/', async () => {
@@ -47,6 +48,12 @@ router
         router.post('login', [LoginController])
       })
       .prefix('auth')
+
+    router
+      .group(() => {
+        router.post('google', [GooglesController])
+      })
+      .prefix('oauth2')
 
     router
       .group(() => {

@@ -40,6 +40,10 @@ export default class LoginController {
           throw new Error('Invalid credentials')
         }
 
+        if (!user.password) {
+          throw new Error('Please login with Google then set a password')
+        }
+
         const isPasswordValid = hash.verify(user.password, password)
         if (!isPasswordValid) {
           throw new Error('Invalid credentials')
