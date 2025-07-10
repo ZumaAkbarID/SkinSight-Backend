@@ -18,7 +18,10 @@ export function generateOtp(length = 5) {
   }
 }
 
-export async function sendOtp(payload: { email: string; fullName: string }) {
+export async function sendOtp(
+  payload: { email: string; fullName: string },
+  purpose: 'register' | 'forgot-password' = 'register'
+) {
   const { otp, expiresAt } = generateOtp()
 
   await Otp.query().where('email', payload.email).delete()
@@ -34,13 +37,14 @@ export async function sendOtp(payload: { email: string; fullName: string }) {
   ;(emailAPI as any).authentications.apiKey.apiKey = env.get('BREVO_API_KEY')
 
   let message = new SendSmtpEmail()
-  message.subject = 'OTP Verification - SkinSight'
+  message.subject = `OTP Verification - SkinSight (${purpose === 'register' ? 'Registration' : 'Forgot Password'})`
   message.htmlContent = `
             <h1>Hi ${payload.fullName},</h1>
-            <p>Thank you for registering with SkinSight. Please use the following OTP to verify your email:</p>
+            <p>Thank you for ${purpose === 'register' ? 'registering with' : 'requesting a password reset for'} SkinSight. Please use the following OTP to ${purpose === 'register' ? 'verify your email' : 'reset your password'}:</p>
             <p><strong>${otp}</strong></p>
             <p>This OTP is valid until ${expiresAt.toFormat('dd LLL yyyy HH:mm:ss')}.</p>
             <p>If you did not request this, please ignore this email.</p>
+            </br>
             <p>Best regards,</p>
             <p>SkinSight Team</p>
             `

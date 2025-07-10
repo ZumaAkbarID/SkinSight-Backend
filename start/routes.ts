@@ -29,6 +29,7 @@ import EducationDetailsController from '#controllers/education/education_details
 import VerifiesController from '#controllers/auth/verifies_controller'
 import { throttle } from '#start/limiter'
 import GooglesController from '#controllers/auth/googles_controller'
+import ForgotPasswordsController from '#controllers/auth/forgot_passwords_controller'
 
 router
   .get('/', async () => {
@@ -54,6 +55,14 @@ router
         router.post('google', [GooglesController])
       })
       .prefix('oauth2')
+
+    router
+      .group(() => {
+        router.post('generate-otp', [ForgotPasswordsController, 'generateOtp'])
+        router.post('verify-otp', [ForgotPasswordsController, 'verifyOtp'])
+        router.post('reset-password', [ForgotPasswordsController, 'resetPassword'])
+      })
+      .prefix('forgot-password')
 
     router
       .group(() => {

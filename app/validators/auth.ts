@@ -51,3 +51,24 @@ export const oauth2GoogleValidator = vine.compile(
     idToken: vine.string(),
   })
 )
+
+export const forgotPassowrdValidator = vine.compile(
+  vine.object({
+    email: vine.string().email(),
+  })
+)
+
+export const otpForgotPasswordValidator = vine.compile(
+  vine.object({
+    email: vine.string().email(),
+    otp: vine.string().minLength(4).maxLength(4),
+  })
+)
+
+export const resetForgotPasswordValidator = vine.compile(
+  vine.object({
+    token: vine.string().uuid(),
+    newPassword: vine.string().minLength(8),
+    confirmPassword: vine.string().minLength(8).sameAs('newPassword'),
+  })
+)

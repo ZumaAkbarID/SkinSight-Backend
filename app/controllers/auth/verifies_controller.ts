@@ -65,19 +65,47 @@ export default class VerifiesController {
         .first()
 
       if (!isValidOtp) {
-        return response.status(400).json(errorResponse('Invalid OTP', 400))
+        return response.status(400).json(
+          successResponse(
+            {
+              isValid: false,
+              statusOtp: 'invalid',
+            },
+            'Invalid OTP',
+            400
+          )
+        )
       }
 
       if (isValidOtp.expiresAt < DateTime.now()) {
-        return response.status(400).json(errorResponse('OTP expired', 400))
+        await isValidOtp.delete()
+
+        return response.status(400).json(
+          successResponse(
+            {
+              isValid: false,
+              statusOtp: 'expired',
+            },
+            'Invalid OTP',
+            400
+          )
+        )
       }
 
       user.emailVerifiedAt = DateTime.now()
-
       await user.save()
       await isValidOtp.delete()
 
-      return response.status(200).json(successResponse(null, 'Email verified successfully', 200))
+      return response.status(200).json(
+        successResponse(
+          {
+            isValid: true,
+            statusOtp: 'valid',
+          },
+          'OTP verified successfully',
+          200
+        )
+      )
     } catch (error) {
       console.error('Error verifying OTP:', error)
       return response.status(500).json(errorResponse('Failed to verify OTP', 500))
