@@ -22,25 +22,24 @@ export default class User extends BaseModel {
   @column({ isPrimary: true })
   declare id: string
 
-  @column({
-    serialize: (value: string | null) => {
-      if (!value) return null
+  // @column({
+  //   serialize: (value: string) => {
+  //     if (value.length <= 15) return value
 
-      if (value.length <= 15) return value
+  //     const parts = value.trim().split(/\s+/)
+  //     if (parts.length >= 2) {
+  //       const combined = `${parts[0]} ${parts[1]}`
+  //       if (combined.length <= 15) {
+  //         return combined
+  //       }
+  //       return parts[0]
+  //     }
 
-      const parts = value.trim().split(/\s+/)
-      if (parts.length >= 2) {
-        const combined = `${parts[0]} ${parts[1]}`
-        if (combined.length <= 15) {
-          return combined
-        }
-        return parts[0]
-      }
-
-      return parts[0]
-    },
-  })
-  declare fullName: string | null
+  //     return parts[0]
+  //   },
+  // })
+  @column()
+  declare fullName: string
 
   @column()
   declare email: string

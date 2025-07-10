@@ -2,6 +2,7 @@ import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import { errors as authErrors } from '@adonisjs/auth'
 import { errorResponse } from '#helpers/response'
+import { errors as limiterErrors } from '@adonisjs/limiter'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -25,6 +26,17 @@ export default class HttpExceptionHandler extends ExceptionHandler {
       return ctx.response
         .status(error.status)
         .send(errorResponse('Unauthorized access', error.status))
+    }
+
+    if (error instanceof limiterErrors.E_TOO_MANY_REQUESTS) {
+      const message = error.getResponseMessage(ctx)
+      const headers = error.getDefaultHeaders()
+
+      Object.keys(headers).forEach((header) => {
+        ctx.response.header(header, headers[header])
+      })
+
+      return ctx.response.status(error.status).send(errorResponse(message, error.status))
     }
 
     return super.handle(error, ctx)

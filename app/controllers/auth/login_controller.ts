@@ -4,6 +4,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import env from '#start/env'
 import hash from '@adonisjs/core/services/hash'
+import limiter from '@adonisjs/limiter/services/main'
 
 export default class LoginController {
   async handle({ request, response }: HttpContext) {
@@ -11,28 +12,63 @@ export default class LoginController {
       const payload = await request.validateUsing(loginUserValidator)
       const { email, password } = payload
 
-      const user = await User.query().where('email', email).preload('userDetail').first()
-      if (!user) {
-        return response.status(404).json(errorResponse('Email or password not found'))
-      }
+      /**
+       * Create a limiter
+       */
+      const loginLimiter = limiter.use({
+        requests: 5,
+        duration: '1 min',
+        blockDuration: '20 mins',
+      })
 
-      const isPasswordValid = await hash.verify(user.password, password)
-      if (!isPasswordValid) {
-        return response.status(401).json(errorResponse('Email or password not found'))
+      /**
+       * Use IP address + email combination. This ensures if an
+       * attacker is misusing emails; we do not block actual
+       * users from logging in and only penalize the attacker
+       * IP address.
+       */
+      const key = `login_${request.ip()}_${email}`
+
+      /**
+       * Wrap User.verifyCredentials inside the "penalize" method, so
+       * that we consume one request for every invalid credentials
+       * error
+       */
+      const [error, result] = await loginLimiter.penalize(key, async () => {
+        const user = await User.query().where('email', email).preload('userDetail').first()
+        if (!user) {
+          throw new Error('Invalid credentials')
+        }
+
+        const isPasswordValid = hash.verify(user.password, password)
+        if (!isPasswordValid) {
+          throw new Error('Invalid credentials')
+        }
+
+        const token = await User.accessTokens.create(user)
+
+        return {
+          user,
+          token,
+        }
+      })
+
+      if (error) {
+        return response
+          .status(429)
+          .json(errorResponse('Too many login attempts. Please try again later', 429))
       }
 
       // await db.from('auth_access_tokens').where('tokenable_id', user.id).delete()
 
-      const token = await User.accessTokens.create(user)
-
       return response.status(200).json(
         successResponse(
           {
-            user,
+            user: result.user,
             token: {
               type: 'Bearer',
-              token: token.value!.release(),
-              expiresAt: token.expiresAt,
+              token: result.token.value!.release(),
+              expiresAt: result.token.expiresAt,
             },
           },
           'Login successful'

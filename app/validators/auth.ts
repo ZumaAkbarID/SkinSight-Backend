@@ -39,3 +39,9 @@ export const loginUserValidator = vine.compile(
 )
 
 loginUserValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)
+
+export const verifyOtpValidator = vine.compile(
+  vine.object({
+    otp: vine.string().minLength(6).maxLength(6),
+  })
+)

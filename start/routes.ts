@@ -26,14 +26,18 @@ import OcrIngredientsHistoriesController from '#controllers/product/ocr_ingredie
 import OcrIngredientsHistoryDetailsController from '#controllers/product/ocr_ingredients_history_details_controller'
 import EducationsController from '#controllers/education/educations_controller'
 import EducationDetailsController from '#controllers/education/education_details_controller'
+import VerifiesController from '#controllers/auth/verifies_controller'
+import { throttle } from '#start/limiter'
 
-router.get('/', async () => {
-  return {
-    hello: 'SkinSight Backend API',
-    adonisVersion: app.adonisVersion,
-    nodeVersion: process.version,
-  }
-})
+router
+  .get('/', async () => {
+    return {
+      hello: 'SkinSight Backend API',
+      adonisVersion: app.adonisVersion,
+      nodeVersion: process.version,
+    }
+  })
+  .use(throttle)
 
 router
   .group(() => {
@@ -47,6 +51,13 @@ router
     router
       .group(() => {
         router.post('/auth/logout', [LogoutsController])
+
+        router
+          .group(() => {
+            router.post('new', [VerifiesController, 'newOtp'])
+            router.post('verify', [VerifiesController, 'verifyOtp'])
+          })
+          .prefix('otp')
 
         router.post('assessment', [AssessmentController])
 
@@ -86,6 +97,7 @@ router
       .use(middleware.auth())
   })
   .prefix('api')
+  .use(throttle)
 
 const PATH_TRAVERSAL_REGEX = /(?:^|[\\/])\.\.(?:[\\/]|$)/
 

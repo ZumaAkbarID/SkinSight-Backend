@@ -1,12 +1,10 @@
-import { generateOtp } from '#helpers/generateOtp'
+import { sendOtp } from '#helpers/generateOtp'
 import { errorResponse, successResponse, validationErrorResponse } from '#helpers/response'
-import Otp from '#models/otp'
 import User from '#models/user'
 import env from '#start/env'
 import { registerUserValidator } from '#validators/auth'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
-import mail from '@adonisjs/mail/services/main'
 import { DateTime } from 'luxon'
 
 export default class RegistersController {
@@ -18,40 +16,18 @@ export default class RegistersController {
 
       // If email verification is bypassed, we can skip the email verification step
       if (!env.get('BYPASS_OTP_VERIFICATION')) {
-        const { otp, expiresAt } = generateOtp()
-
-        await Otp.create({
+        await sendOtp({
+          fullName: payload.fullName,
           email: payload.email,
-          otp: otp.toString(),
-          expiresAt: expiresAt,
-          isUsed: false,
-        })
-
-        await mail.use('brevo').send((message) => {
-          message.to(payload.email).from(env.get('MAIL_FROM_EMAIL')).subject('OTP Verification')
-            .html(`
-            <h1>Hi ${payload.fullName},</h1>
-            <p>Thank you for registering with SkinSight. Please use the following OTP to verify your email:</p>
-            <p><strong>${otp}</strong></p>
-            <p>This OTP is valid until ${expiresAt.toFormat('dd LLL yyyy HH:mm:ss')}.</p>
-            <p>If you did not request this, please ignore this email.</p>
-            <p>Best regards,</p>
-            <p>SkinSight Team</p>
-            `)
         })
       } else {
         isValidated = true
       }
 
-      const newPassword = await hash.make(payload.password)
-      if (env.get('NODE_ENV') === 'development') {
-        console.log('New password hash:', newPassword)
-      }
-
       const user = await User.create({
         fullName: payload.fullName,
         email: payload.email,
-        password: newPassword,
+        password: await hash.make(payload.password),
         emailVerifiedAt: isValidated ? DateTime.now() : null,
       })
 
