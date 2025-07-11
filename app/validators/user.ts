@@ -1,4 +1,5 @@
 import vine, { SimpleMessagesProvider } from '@vinejs/vine'
+import { validationFields, validationMessages } from './CustomSimpleMessagesProvider.js'
 
 export const updateProfileValidator = vine.compile(
   vine.object({
@@ -12,19 +13,20 @@ export const updateProfileValidator = vine.compile(
   })
 )
 
-const fields = {
-  fullName: 'Full Name',
-  profilePicture: 'Profile Picture',
-}
+updateProfileValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)
 
-const messages = {
-  minLength: '{field} must be at least {options.minLength} characters long',
-  maxLength: '{field} must not exceed {options.maxLength} characters',
-  file: '{field} must be a valid file',
-  extnames: '{field} must be one of the following formats: {options.extnames}',
-  size: '{field} must not exceed {options.size}',
-  required: '{field} is required',
-  optional: '{field} is optional',
-}
+export const changePasswordValidator = vine.compile(
+  vine.object({
+    currentPassword: vine.string().minLength(8).optional(),
+    newPassword: vine.string().minLength(8),
+    confirmPassword: vine.string().minLength(8).sameAs('newPassword'),
+  })
+)
 
-updateProfileValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)
+changePasswordValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)

@@ -1,4 +1,5 @@
 import vine, { SimpleMessagesProvider } from '@vinejs/vine'
+import { validationFields, validationMessages } from './CustomSimpleMessagesProvider.js'
 
 export const fillAssessmentValidator = vine.compile(
   vine.object({
@@ -19,21 +20,7 @@ export const fillAssessmentValidator = vine.compile(
   })
 )
 
-const fields = {
-  gender: 'Gender',
-  dateOfBirth: 'Date of Birth',
-  scanImage: 'Scan Image',
-  skinType: 'Skin Type',
-  age: 'Age',
-}
-
-const messages = {
-  in: 'The {{ field }} is not valid.',
-  size: 'The {{ field }} must be less than {{ size }}.',
-  extnames: 'The {{ field }} must be a valid image file (jpg, jpeg, png).',
-  date: 'The {{ field }} must be a valid date.',
-  required: 'The {{ field }} is required.',
-  optional: 'The {{ field }} is optional.',
-}
-
-fillAssessmentValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)
+fillAssessmentValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)

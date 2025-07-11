@@ -30,6 +30,7 @@ import VerifiesController from '#controllers/auth/verifies_controller'
 import { throttle } from '#start/limiter'
 import GooglesController from '#controllers/auth/googles_controller'
 import ForgotPasswordsController from '#controllers/auth/forgot_passwords_controller'
+import ChangePasswordsController from '#controllers/user/change_passwords_controller'
 
 router
   .get('/', async () => {
@@ -66,14 +67,15 @@ router
 
     router
       .group(() => {
-        router.post('/auth/logout', [LogoutsController])
+        router.post('new', [VerifiesController, 'newOtp'])
+        router.post('verify', [VerifiesController, 'verifyOtp'])
+      })
+      .prefix('otp')
+      .middleware(middleware.auth())
 
-        router
-          .group(() => {
-            router.post('new', [VerifiesController, 'newOtp'])
-            router.post('verify', [VerifiesController, 'verifyOtp'])
-          })
-          .prefix('otp')
+    router
+      .group(() => {
+        router.post('/auth/logout', [LogoutsController])
 
         router.post('assessment', [AssessmentController])
 
@@ -81,6 +83,8 @@ router
           .group(() => {
             router.get('profile', [ProfilesController])
             router.put('profile', [UpdateProfilesController])
+
+            router.post('change-password', [ChangePasswordsController])
           })
           .prefix('user')
 
@@ -110,7 +114,7 @@ router
 
         router.get('ads', [AdsController])
       })
-      .use(middleware.auth())
+      .use([middleware.auth(), middleware.verifiedUser()])
   })
   .prefix('api')
   .use(throttle)

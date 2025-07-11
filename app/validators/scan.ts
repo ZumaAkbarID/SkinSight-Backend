@@ -1,4 +1,5 @@
-import vine from '@vinejs/vine'
+import vine, { SimpleMessagesProvider } from '@vinejs/vine'
+import { validationFields, validationMessages } from './CustomSimpleMessagesProvider.js'
 
 export const scanFaceValidator = vine.compile(
   vine.object({
@@ -9,6 +10,11 @@ export const scanFaceValidator = vine.compile(
   })
 )
 
+scanFaceValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)
+
 export const scanIngredientValidator = vine.compile(
   vine.object({
     productName: vine.string().maxLength(100),
@@ -17,4 +23,9 @@ export const scanIngredientValidator = vine.compile(
       extnames: ['jpg', 'jpeg', 'png'],
     }),
   })
+)
+
+scanIngredientValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
 )

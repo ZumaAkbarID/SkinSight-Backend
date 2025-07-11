@@ -1,5 +1,6 @@
 import { SimpleMessagesProvider } from '@vinejs/vine'
 import vine from '@vinejs/vine'
+import { validationFields, validationMessages } from './CustomSimpleMessagesProvider.js'
 
 export const registerUserValidator = vine.compile(
   vine.object({
@@ -13,23 +14,10 @@ export const registerUserValidator = vine.compile(
   })
 )
 
-const messages = {
-  required: 'The {{ field }} field is required.',
-  minLength: 'The {{ field }} field must be at least {{ argument }} characters long.',
-  maxLength: 'The {{ field }} field must not exceed {{ argument }} characters.',
-  email: 'The {{ field }} field must be a valid email address.',
-  unique: 'The {{ field }} field must be unique.',
-  sameAs: 'The {{ field }} field must match the Password field.',
-}
-
-const fields = {
-  fullName: 'Full Name',
-  email: 'Email',
-  password: 'Password',
-  confirmPassword: 'Confirm Password',
-}
-
-registerUserValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)
+registerUserValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)
 
 export const loginUserValidator = vine.compile(
   vine.object({
@@ -38,12 +26,20 @@ export const loginUserValidator = vine.compile(
   })
 )
 
-loginUserValidator.messagesProvider = new SimpleMessagesProvider(messages, fields)
+loginUserValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)
 
 export const verifyOtpValidator = vine.compile(
   vine.object({
     otp: vine.string().minLength(5).maxLength(5),
   })
+)
+
+verifyOtpValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
 )
 
 export const oauth2GoogleValidator = vine.compile(
@@ -58,11 +54,21 @@ export const forgotPassowrdValidator = vine.compile(
   })
 )
 
+forgotPassowrdValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
+)
+
 export const otpForgotPasswordValidator = vine.compile(
   vine.object({
     email: vine.string().email(),
     otp: vine.string().minLength(4).maxLength(4),
   })
+)
+
+otpForgotPasswordValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
 )
 
 export const resetForgotPasswordValidator = vine.compile(
@@ -71,4 +77,9 @@ export const resetForgotPasswordValidator = vine.compile(
     newPassword: vine.string().minLength(8),
     confirmPassword: vine.string().minLength(8).sameAs('newPassword'),
   })
+)
+
+resetForgotPasswordValidator.messagesProvider = new SimpleMessagesProvider(
+  validationMessages,
+  validationFields
 )

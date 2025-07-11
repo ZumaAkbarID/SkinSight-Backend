@@ -58,6 +58,11 @@ export default class User extends BaseModel {
     return !!this.emailVerifiedAt
   }
 
+  @computed()
+  get hasPassword(): boolean {
+    return !!this.password && this.password.length > 0
+  }
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

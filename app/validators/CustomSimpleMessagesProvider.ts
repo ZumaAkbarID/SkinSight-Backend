@@ -1,0 +1,31 @@
+export const validationFields = {
+  gender: 'Gender',
+  dateOfBirth: 'Date of Birth',
+  scanImage: 'Scan Image',
+  skinType: 'Skin Type',
+  age: 'Age',
+  fullName: 'Full Name',
+  email: 'Email',
+  password: 'Password',
+  newPassword: 'New Password',
+  confirmPassword: 'Confirm Password',
+  otp: 'OTP',
+  idToken: 'ID Token',
+  token: 'Token',
+  profilePicture: 'Profile Picture',
+}
+
+export const validationMessages = {
+  in: 'The {{ field }} is not valid.',
+  size: 'The {{ field }} must be less than {{ size }}.',
+  extnames: 'The {{ field }} must be a valid image file (jpg, jpeg, png).',
+  date: 'The {{ field }} field must be formatted as {{ format }}.',
+  required: 'The {{ field }} is required.',
+  optional: 'The {{ field }} is optional.',
+  minLength: 'The {{ field }} field must be at least {{ min }} characters long.',
+  maxLength: 'The {{ field }} field must not exceed {{ max }} characters.',
+  email: 'The {{ field }} field must be a valid email address.',
+  unique: 'The {{ field }} field must be unique.',
+  sameAs: 'The {{ field }} field must match the Password field.',
+  file: '{field} must be a valid file',
+}
