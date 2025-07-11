@@ -53,12 +53,12 @@ export default class User extends BaseModel {
   @column.dateTime()
   declare emailVerifiedAt: DateTime | null
 
-  @computed()
+  @computed({ serializeAs: 'isVerified' })
   get isVerified(): boolean {
     return !!this.emailVerifiedAt
   }
 
-  @computed()
+  @computed({ serializeAs: 'hasPassword' })
   get hasPassword(): boolean {
     return !!this.password && this.password.length > 0
   }
