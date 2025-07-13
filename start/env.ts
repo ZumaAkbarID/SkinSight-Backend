@@ -50,11 +50,12 @@ export default await Env.create(new URL('../', import.meta.url), {
   ML_URL: Env.schema.string(),
   BYPASS_FACE_SCAN: Env.schema.boolean(),
   BYPASS_INGREDIENTS_OCR: Env.schema.boolean(),
+  BYPASS_LIMITER: Env.schema.boolean(),
 
   /*
   |----------------------------------------------------------
   | Variables for configuring the limiter package
   |----------------------------------------------------------
   */
-  LIMITER_STORE: Env.schema.enum(['database', 'memory'] as const)
+  LIMITER_STORE: Env.schema.enum(['database', 'memory'] as const),
 })
