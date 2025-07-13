@@ -56,7 +56,11 @@ export default class ProductsController {
   async getTypesAndBrands({ response }: HttpContext) {
     try {
       const types = await Product.query().distinct('type').orderBy('type', 'asc')
-      const brands = await Product.query().distinct('brand').orderBy('brand', 'asc')
+      const brands = await Product.query()
+        .select('brand')
+        .count('id as total')
+        .groupBy('brand')
+        .orderBy('brand', 'asc')
 
       const merged = {
         types: [...types.map((item) => item.type)],
@@ -68,6 +72,7 @@ export default class ProductsController {
                 .builder()
                 .params([`${stringHelpers.slug(item.brand.toLowerCase())}.jpg`])
                 .make('brands'),
+              total: item.$extras.total,
             }
           }),
         ],
