@@ -18,34 +18,17 @@ export async function getProductRecommendations(skinType: string) {
     )
 
     const mappedRecommendationsName = apiRes.data.recommendations.map(
-      (item: any) => item.product_name
+      (rec: any) => rec.product_name
     )
 
-    const productRecords = await Product.query()
+    const recommendations = await Product.query()
       .whereIn('title', mappedRecommendationsName)
-      .select(['id', 'title'])
-
-    const titleToIdMap = productRecords.reduce(
-      (acc, curr) => {
-        acc[curr.title] = curr.id
-        return acc
-      },
-      {} as Record<string, string>
-    )
-
-    const mappedRecommendations = apiRes.data.recommendations.map((item: any) => ({
-      id: titleToIdMap[item.product_name] ?? null,
-      productName: item.product_name,
-      productImage: item.product_image,
-      productLink: item.product_link,
-      price: new Intl.NumberFormat('id-ID').format(item.price),
-      matchReason: item.match_reason,
-    }))
+      .orderBy('price', 'asc')
 
     return {
       status: true,
       message: 'Successfully getting recommendations',
-      ml: mappedRecommendations,
+      ml: recommendations,
     }
   } catch (err: any) {
     console.error('Error saat menghubungi ML API:', err)
