@@ -164,3 +164,17 @@ router
     return response.download(absolutePath)
   })
   .as('ingredientsScan')
+
+router
+  .get('/brands/*', ({ request, response }) => {
+    const filePath = request.param('*').join(sep)
+    const normalizedPath = normalize(filePath)
+
+    if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
+      return response.badRequest('Malformed path')
+    }
+
+    const absolutePath = app.makePath('uploads/brands', normalizedPath)
+    return response.download(absolutePath)
+  })
+  .as('brands')

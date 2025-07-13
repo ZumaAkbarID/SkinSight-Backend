@@ -1,6 +1,8 @@
 import { errorResponse, successResponse } from '#helpers/response'
 import Product from '#models/product'
+import stringHelpers from '@adonisjs/core/helpers/string'
 import type { HttpContext } from '@adonisjs/core/http'
+import router from '@adonisjs/core/services/router'
 
 export default class ProductsController {
   async all({ auth, request, response }: HttpContext) {
@@ -58,7 +60,17 @@ export default class ProductsController {
 
       const merged = {
         types: [...types.map((item) => item.type)],
-        brands: [...brands.map((item) => item.brand)],
+        brands: [
+          ...brands.map((item) => {
+            return {
+              name: item.brand,
+              image: router
+                .builder()
+                .params([`${stringHelpers.slug(item.brand.toLowerCase())}.jpg`])
+                .make('brands'),
+            }
+          }),
+        ],
       }
 
       return response
