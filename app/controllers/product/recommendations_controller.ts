@@ -1,5 +1,5 @@
+import { getProductRecommendations } from '#helpers/get_recommendations'
 import { errorResponse, successResponse } from '#helpers/response'
-import Product from '#models/product'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class RecommendationsController {
@@ -14,11 +14,15 @@ export default class RecommendationsController {
     }
 
     try {
-      const products = await Product.query().orderByRaw('RAND()').limit(5)
+      const { status, message, ml } = await getProductRecommendations(user.userDetail.skinType)
+
+      if (!status) {
+        return response.status(500).json(errorResponse(message, 500))
+      }
 
       return response
         .status(200)
-        .json(successResponse(products, 'Recommendations fetched successfully', 200))
+        .json(successResponse(ml, 'Recommendations fetched successfully', 200))
     } catch (error) {
       console.error('Error fetching recommendations:', error)
       return response.status(500).json(errorResponse('Failed to fetch recommendations', 500))
