@@ -5,6 +5,7 @@ import {
   belongsTo,
   CamelCaseNamingStrategy,
   column,
+  computed,
 } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 import Education from './education.js'
@@ -14,7 +15,7 @@ export default class EducationDetail extends BaseModel {
   static selfAssignPrimaryKey = true
   public static namingStrategy = new CamelCaseNamingStrategy()
 
-  @column({ isPrimary: true })
+  @column({ isPrimary: true, serializeAs: null })
   declare id: string
 
   @column({ serializeAs: null })
@@ -23,15 +24,29 @@ export default class EducationDetail extends BaseModel {
   @column()
   declare markdown: string
 
-  @column.dateTime({ autoCreate: true })
+  @computed()
+  get readTime(): string {
+    const words = this.markdown?.split(/\s+/).length ?? 0
+    const minutes = Math.ceil(words / 200)
+    return minutes <= 1 ? '< 1 min read' : `${minutes} min read`
+  }
+
+  @column.dateTime({
+    autoCreate: true,
+    serialize: (value: DateTime) => {
+      return value.toFormat('dd LLLL yyyy')
+    },
+  })
   declare createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: null })
   declare updatedAt: DateTime
 
   @beforeCreate()
   static assignUuid(educationDetail: EducationDetail) {
-    educationDetail.id = randomUUID()
+    if (!educationDetail.id) {
+      educationDetail.id = randomUUID()
+    }
   }
 
   @belongsTo(() => Education)
