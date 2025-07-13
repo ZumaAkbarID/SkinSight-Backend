@@ -40,11 +40,21 @@ export default class RecommendationsController {
       const sort = request.input('sort', 'price') // default sort by price
       const type = request.input('type') // opsional
       const brand = request.input('brand') // opsional
+      const search = request.input('search') // opsional
 
       const page = request.input('page', 1)
       const limit = 10
 
       let query = Product.query()
+
+      if (search) {
+        query = query.where((builder) => {
+          builder
+            .where('title', 'like', `%${search}%`)
+            .orWhere('description', 'like', `%${search}%`)
+            .orWhere('brand', 'like', `%${search}%`)
+        })
+      }
 
       if (type) query = query.where('type', type)
       if (brand) query = query.where('brand', brand)

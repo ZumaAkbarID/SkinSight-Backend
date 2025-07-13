@@ -12,7 +12,7 @@ export default class Product extends BaseModel {
   @column()
   declare title: string
 
-  @column()
+  @column({ serialize: (value: number) => new Intl.NumberFormat('id-ID').format(value) })
   declare price: number
 
   @column()
