@@ -13,6 +13,7 @@ export const validationFields = {
   idToken: 'ID Token',
   token: 'Token',
   profilePicture: 'Profile Picture',
+  brand: 'Brand',
 }
 
 export const validationMessages = {
