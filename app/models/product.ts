@@ -1,6 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, CamelCaseNamingStrategy, column } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  CamelCaseNamingStrategy,
+  column,
+  computed,
+} from '@adonisjs/lucid/orm'
 import { randomUUID } from 'crypto'
+import router from '@adonisjs/core/services/router'
+import stringHelpers from '@adonisjs/core/helpers/string'
 
 export default class Product extends BaseModel {
   static selfAssignPrimaryKey = true
@@ -20,6 +28,14 @@ export default class Product extends BaseModel {
 
   @column()
   declare imageUrl: string
+
+  @computed({ serializeAs: 'brandImageUrl' })
+  get brandImageUrl() {
+    return router
+      .builder()
+      .params([`${stringHelpers.slug(this.brand.toLowerCase())}.jpg`])
+      .make('brands')
+  }
 
   @column()
   declare link: string
