@@ -34,6 +34,8 @@ import ChangePasswordsController from '#controllers/user/change_passwords_contro
 import ProductsController from '#controllers/product/products_controller'
 import CategoriesBrandsController from '#controllers/product/categories_brands_controller'
 import ProductCategoriesController from '#controllers/product/product_categories_controller'
+import NewsController from '#controllers/news/news_controller'
+import NewsDetailsController from '#controllers/news/news_details_controller'
 
 router
   .get('/', async () => {
@@ -114,9 +116,16 @@ router
         router
           .group(() => {
             router.get('/', [EducationsController])
-            router.get('/:id', [EducationDetailsController])
+            router.get('/detail', [EducationDetailsController])
           })
           .prefix('educations')
+
+        router
+          .group(() => {
+            router.get('/', [NewsController])
+            router.post('/:id', [NewsDetailsController])
+          })
+          .prefix('news')
 
         router.get('ads', [AdsController])
       })
