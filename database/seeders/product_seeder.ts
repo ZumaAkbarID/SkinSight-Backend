@@ -28,6 +28,11 @@ export default class extends BaseSeeder {
     console.log(`📥 Memulai impor data dari ${filePath}...`)
 
     for await (const row of parser) {
+      if (!row['Title'] || !row['Price']) {
+        console.warn(`⚠️  Baris dilewati karena tidak lengkap:`, row)
+        continue
+      }
+
       const rawDescription = row['Description'] || ''
       const markdownDescription = formatDescriptionToMarkdown(rawDescription)
 
