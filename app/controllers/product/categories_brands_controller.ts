@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { errorResponse, successResponse, validationErrorResponse } from '#helpers/response'
-import Product from '#models/product'
+import db from '@adonisjs/lucid/services/db'
 
 export default class CategoriesBrandsController {
   async handle({ request, response }: HttpContext) {
@@ -13,18 +13,16 @@ export default class CategoriesBrandsController {
     }
 
     try {
-      const products = await Product.query().where('brand', brand)
-
-      const categorized = products.reduce<Record<string, any[]>>((acc, product) => {
-        const type = product.type ?? 'unknown'
-        if (!acc[type]) acc[type] = []
-        acc[type].push(product)
-        return acc
-      }, {})
+      const result = await db
+        .from('products')
+        .where('brand', brand)
+        .groupBy('type')
+        .select('type')
+        .count('* as productCount')
 
       return response
         .status(200)
-        .json(successResponse(categorized, 'Categories fetched successfully', 200))
+        .json(successResponse(result, 'Categories fetched successfully', 200))
     } catch (error) {
       console.error('Error fetching categories for brand:', error)
       return response.status(500).json(errorResponse('Failed to fetch categories for brand', 500))
