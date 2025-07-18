@@ -4,7 +4,7 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class CategoriesBrandsController {
   async handle({ request, response }: HttpContext) {
-    const brand = request.input('brand')
+    const brand = request.param('brand')
 
     if (!brand) {
       return response

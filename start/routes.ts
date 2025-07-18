@@ -33,6 +33,7 @@ import ForgotPasswordsController from '#controllers/auth/forgot_passwords_contro
 import ChangePasswordsController from '#controllers/user/change_passwords_controller'
 import ProductsController from '#controllers/product/products_controller'
 import CategoriesBrandsController from '#controllers/product/categories_brands_controller'
+import ProductCategoriesController from '#controllers/product/product_categories_controller'
 
 router
   .get('/', async () => {
@@ -105,7 +106,8 @@ router
             router.get('recommendations', [RecommendationsController])
             router.get('all', [ProductsController, 'all'])
             router.get('types-and-brands', [ProductsController, 'getTypesAndBrands'])
-            router.get('categories', [CategoriesBrandsController])
+            router.get('brand/:brand', [CategoriesBrandsController])
+            router.get('brand/:brand/:type', [ProductCategoriesController])
           })
           .prefix('product')
 
