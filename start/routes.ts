@@ -105,7 +105,7 @@ router
             router.get('recommendations', [RecommendationsController])
             router.get('all', [ProductsController, 'all'])
             router.get('types-and-brands', [ProductsController, 'getTypesAndBrands'])
-            router.get('categories-of-brand', [CategoriesBrandsController])
+            router.get('categories', [CategoriesBrandsController])
           })
           .prefix('product')
 

@@ -31,9 +31,10 @@ export default class Product extends BaseModel {
 
   @computed({ serializeAs: 'brandImageUrl' })
   get brandImageUrl() {
+    const brandSlug = this.brand ? stringHelpers.slug(this.brand.toLowerCase()) : 'default'
     return router
       .builder()
-      .params([`${stringHelpers.slug(this.brand.toLowerCase())}.jpg`])
+      .params([`${brandSlug}.jpg`])
       .make('brands')
   }
 
