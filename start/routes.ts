@@ -117,14 +117,14 @@ router
         router
           .group(() => {
             router.get('/', [EducationsController])
-            router.get('/detail', [EducationDetailsController])
+            router.post('/detail', [EducationDetailsController])
           })
           .prefix('educations')
 
         router
           .group(() => {
             router.get('/', [NewsController])
-            router.post('/:id', [NewsDetailsController])
+            router.post('/detail', [NewsDetailsController])
           })
           .prefix('news')
 

@@ -1,3 +1,9 @@
+/**
+ *
+ * WE DONT USE THIS ANYMORE
+ * WE USE SCRAPING INSTEAD
+ */
+
 import { DateTime } from 'luxon'
 import {
   BaseModel,

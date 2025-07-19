@@ -1,10 +1,10 @@
 import axios from 'axios'
 import env from '#start/env'
 
-export async function getNews(page: number = 1) {
+export async function getEducations(page: number = 1) {
   try {
     const apiRes = await axios.post(
-      `${env.get('ML_URL')}/skincare-news`,
+      `${env.get('ML_URL')}/skincare-educations`,
       {
         page: Number(page),
       },
@@ -16,10 +16,11 @@ export async function getNews(page: number = 1) {
       }
     )
 
-    const mappedData = apiRes.data.Article_List.map((item: any) => ({
+    const mappedData = apiRes.data.Educations_List.map((item: any) => ({
       title: item.Title,
       link: item.Link,
       image: item.Image,
+      snippet: item.Snippet,
       date: item.Date,
       category: item.Category,
     }))
@@ -28,9 +29,9 @@ export async function getNews(page: number = 1) {
 
     return {
       status: true,
-      message: 'Successfully getting recommendations',
+      message: 'Successfully getting educations',
       api: {
-        news: mappedData,
+        educations: mappedData,
         hasNext: hasNext,
         currentNext: Number(page),
         nextPage: hasNext ? Number(page) + 1 : null,
@@ -49,10 +50,10 @@ export async function getNews(page: number = 1) {
   }
 }
 
-export async function getNewsDetail(articleLink: string) {
+export async function getEducationDetail(articleLink: string) {
   try {
     const apiRes = await axios.post(
-      `${env.get('ML_URL')}/skincare-news-details`,
+      `${env.get('ML_URL')}/skincare-education-details`,
       {
         article_link: articleLink,
       },
@@ -64,7 +65,7 @@ export async function getNewsDetail(articleLink: string) {
       }
     )
 
-    if (!apiRes.data || !apiRes.data.length) {
+    if (!apiRes.data) {
       return {
         status: false,
         message: 'No data found for the provided article link',
@@ -73,17 +74,17 @@ export async function getNewsDetail(articleLink: string) {
     }
 
     const mappedData = {
-      title: apiRes.data[0].Title,
-      imageUrl: apiRes.data[0].ImageUrl,
-      date: apiRes.data[0].Date,
-      source: apiRes.data[0].Source,
-      author: apiRes.data[0].Author,
-      content: apiRes.data[0].Content,
+      title: apiRes.data.Title,
+      author: apiRes.data.Author,
+      date: apiRes.data.Date,
+      coverImage: apiRes.data.Cover_Image,
+      content: apiRes.data.Content,
+      images: apiRes.data.Images || [],
     }
 
     return {
       status: true,
-      message: 'Successfully getting recommendations',
+      message: 'Successfully getting detail education',
       api: mappedData,
     }
   } catch (err: any) {

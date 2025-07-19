@@ -1,31 +1,25 @@
+import { getEducationDetail } from '#helpers/get_education'
 import { errorResponse, successResponse } from '#helpers/response'
-import Education from '#models/education'
+import { getEducationDetailValidator } from '#validators/education'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class EducationDetailsController {
   async handle({ request, response }: HttpContext) {
-    const educationId = request.param('id')
-
-    if (!educationId) {
-      return response.status(400).send(errorResponse('Education ID is required', 400))
-    }
+    const { articleLink } = await request.validateUsing(getEducationDetailValidator)
 
     try {
-      const educationDetail = await Education.query()
-        .where('id', educationId)
-        .preload('detail')
-        .first()
+      const { status, message, api } = await getEducationDetail(articleLink)
 
-      if (!educationDetail || !educationDetail.detail) {
-        return response.status(404).send(errorResponse('Education detail not found', 404))
+      if (!status) {
+        return response.status(500).json(errorResponse(message, 500))
       }
 
       return response
         .status(200)
-        .send(successResponse(educationDetail, 'Education detail fetched successfully', 200))
+        .json(successResponse(api, 'Detail News fetched successfully', 200))
     } catch (error) {
-      console.error('Error fetching education detail:', error)
-      return response.status(500).send(errorResponse('Failed to fetch education detail', 500))
+      console.error('Error fetching Detail News:', error)
+      return response.status(500).json(errorResponse('Failed to fetch Detail News', 500))
     }
   }
 }
