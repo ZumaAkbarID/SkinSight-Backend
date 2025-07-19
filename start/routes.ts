@@ -36,6 +36,7 @@ import CategoriesBrandsController from '#controllers/product/categories_brands_c
 import ProductCategoriesController from '#controllers/product/product_categories_controller'
 import NewsController from '#controllers/news/news_controller'
 import NewsDetailsController from '#controllers/news/news_details_controller'
+import CurrentuvindicesController from '#controllers/external/currentuvindices_controller'
 
 router
   .get('/', async () => {
@@ -126,6 +127,8 @@ router
             router.post('/:id', [NewsDetailsController])
           })
           .prefix('news')
+
+        router.get('current-uv-index', [CurrentuvindicesController])
 
         router.get('ads', [AdsController])
       })
