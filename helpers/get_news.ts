@@ -1,6 +1,13 @@
 import axios from 'axios'
 import env from '#start/env'
 
+function formatCategory(slug: string): string {
+  return slug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 export async function getNews(page: number = 1) {
   try {
     const apiRes = await axios.post(
@@ -21,7 +28,7 @@ export async function getNews(page: number = 1) {
       link: item.Link,
       image: item.Image,
       date: item.Date,
-      category: item.Category,
+      category: formatCategory(item.Category),
     }))
 
     const hasNext = Number(apiRes.data.Pagination.Next_Page) > Number(page)
