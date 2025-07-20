@@ -116,7 +116,7 @@ router
 
         router
           .group(() => {
-            router.get('/', [EducationsController])
+            router.post('/', [EducationsController])
             router.post('/detail', [EducationDetailsController])
           })
           .prefix('educations')

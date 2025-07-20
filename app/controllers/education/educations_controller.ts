@@ -1,13 +1,18 @@
 import { getEducations } from '#helpers/get_education'
 import { errorResponse, successResponse } from '#helpers/response'
+import { getEducationValidator } from '#validators/education'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class EducationsController {
   async handle({ request, response }: HttpContext) {
-    const page = request.input('page', 1)
+    const payload = await request.validateUsing(getEducationValidator)
 
     try {
-      const { status, message, api } = await getEducations(page)
+      const { status, message, api } = await getEducations(
+        payload.page,
+        payload.prevLink,
+        payload.nextLink
+      )
 
       if (!status) {
         return response.status(500).json(errorResponse(message, 500))
