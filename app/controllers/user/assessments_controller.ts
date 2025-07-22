@@ -29,6 +29,7 @@ export default class AssessmentController {
         message: string,
         mlResult,
         fileName: string | null = null
+
       if (payload.scanImage) {
         try {
           const processed = await processFaceScan(payload.scanImage)
@@ -53,7 +54,7 @@ export default class AssessmentController {
           predictedLabel: mlResult.predicted_label,
         })
 
-        skinType = mlResult.skinType
+        skinType = mlResult.predicted_label
       }
 
       let userDetail = await UserDetail.query().where('user_id', user.id).first()
