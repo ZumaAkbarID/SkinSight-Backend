@@ -29,7 +29,7 @@ export default class OcrIngredientsController {
         return response.status(400).json(errorResponse(message, 400, ml))
       }
 
-      if (ml.extractedIngredients == 'Ingredients Tidak Ditemukan.') {
+      if (ml.extractedIngredients == 'ingredients not found') {
         return response
           .status(400)
           .json(errorResponse('No ingredients found in the scan image', 400, ml))
