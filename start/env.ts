@@ -52,6 +52,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   BYPASS_INGREDIENTS_OCR: Env.schema.boolean(),
   BYPASS_LIMITER: Env.schema.boolean(),
   API_UV_URL: Env.schema.string(),
+  API_GEO_URL: Env.schema.string(),
 
   /*
   |----------------------------------------------------------

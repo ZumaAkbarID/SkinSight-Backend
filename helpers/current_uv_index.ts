@@ -48,18 +48,25 @@ function getUVRecommendation(uvIndex: number): { spfMin: number; description: st
 
 export async function getCurrentUVIndex(long: string, lat: string) {
   try {
-    const apiRes = await axios.get(`${env.get('API_UV_URL')}?latitude=${lat}&longitude=${long}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    })
+    const [apiUVRes, apiGeoRes] = await Promise.all([
+      axios.get(`${env.get('API_UV_URL')}?latitude=${lat}&longitude=${long}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      }),
+      axios.get(`${env.get('API_GEO_URL')}?latitude=${lat}&longitude=${long}&localityLanguage=en`, {
+        headers: {
+          Accept: 'application/json',
+        },
+      }),
+    ])
 
-    if (apiRes.status !== 200) {
-      throw new Error(`Failed to fetch data: ${apiRes.statusText}`)
+    if (apiUVRes.status !== 200) {
+      throw new Error(`Failed to fetch data: ${apiUVRes.statusText}`)
     }
 
-    const data = apiRes.data
+    const data = apiUVRes.data
 
     const recommendations = getUVRecommendation(data.now.uvi)
 
@@ -68,6 +75,12 @@ export async function getCurrentUVIndex(long: string, lat: string) {
       uvi: data.now.uvi,
       level: classifyUVIndex(data.now.uvi),
       recommendation: recommendations.description,
+      location: {
+        city: apiGeoRes.data.city || 'Unknown',
+        country: apiGeoRes.data.countryName || 'Unknown',
+        countryCode: apiGeoRes.data.countryCode || 'Unknown',
+        locality: apiGeoRes.data.locality || 'Unknown',
+      },
     }
 
     const forecast = data.forecast.map((entry: any) => ({
