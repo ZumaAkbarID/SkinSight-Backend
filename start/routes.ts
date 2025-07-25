@@ -37,6 +37,7 @@ import ProductCategoriesController from '#controllers/product/product_categories
 import NewsController from '#controllers/news/news_controller'
 import NewsDetailsController from '#controllers/news/news_details_controller'
 import CurrentuvindicesController from '#controllers/external/currentuvindices_controller'
+import SendMessagesController from '#controllers/chatbot/send_messages_controller'
 
 router
   .get('/', async () => {
@@ -127,6 +128,12 @@ router
             router.post('/detail', [NewsDetailsController])
           })
           .prefix('news')
+
+        router
+          .group(() => {
+            router.post('/send-message', [SendMessagesController])
+          })
+          .prefix('chat')
 
         router.get('current-uv-index', [CurrentuvindicesController])
 

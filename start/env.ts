@@ -53,6 +53,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   BYPASS_LIMITER: Env.schema.boolean(),
   API_UV_URL: Env.schema.string(),
   API_GEO_URL: Env.schema.string(),
+  N8N_URL: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
