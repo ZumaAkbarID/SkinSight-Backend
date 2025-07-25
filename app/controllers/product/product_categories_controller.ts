@@ -19,7 +19,9 @@ export default class ProductCategoriesController {
     }
 
     try {
-      const result = await Product.query().where('brand', brand).where('type', type)
+      const result = await Product.query()
+        .where('brand', brand.replace(/-/g, ' '))
+        .where('type', type.replace(/-/g, ' '))
 
       return response
         .status(200)

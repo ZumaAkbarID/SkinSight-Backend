@@ -15,7 +15,7 @@ export default class CategoriesBrandsController {
     try {
       const result = await db
         .from('products')
-        .where('brand', brand)
+        .where('brand', brand.replace(/-/g, ' '))
         .groupBy('type')
         .select('type')
         .count('* as productCount')
