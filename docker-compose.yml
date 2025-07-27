@@ -4,12 +4,25 @@ services:
     container_name: skinsight_backend
     environment:
       - NODE_ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     env_file:
       - .env.production.local
     ports:
       - '9090:3333'
     volumes:
       - ./uploads:/app/uploads
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - skinsight-net
+
+  redis:
+    image: redis:8-alpine
+    container_name: skinsight_redis
+    ports:
+      - '6379:6379'
     restart: unless-stopped
     networks:
       - skinsight-net
