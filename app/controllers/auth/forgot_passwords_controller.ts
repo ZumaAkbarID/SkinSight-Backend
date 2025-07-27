@@ -61,14 +61,21 @@ export default class ForgotPasswordsController {
     }
   }
 
-  async newOtp({ auth, request, response }: HttpContext) {
-    const user = auth.user!
+  async newOtp({ request, response }: HttpContext) {
+    const { email } = await request.validateUsing(forgotPassowrdValidator)
 
     if (env.get('BYPASS_OTP_VERIFICATION')) {
       return response.status(400).json(errorResponse('OTP verification is bypassed', 400))
     }
 
     try {
+      const user = await User.findBy('email', email)
+      if (!user) {
+        return response
+          .status(404)
+          .json(errorResponse(`Account with email ${email} not found!`, 404))
+      }
+
       /**
        * Create a limiter
        */
