@@ -67,6 +67,7 @@ router
     router
       .group(() => {
         router.post('generate-otp', [ForgotPasswordsController, 'generateOtp'])
+        router.post('resend-otp', [ForgotPasswordsController, 'newOtp'])
         router.post('verify-otp', [ForgotPasswordsController, 'verifyOtp'])
         router.post('reset-password', [ForgotPasswordsController, 'resetPassword'])
       })

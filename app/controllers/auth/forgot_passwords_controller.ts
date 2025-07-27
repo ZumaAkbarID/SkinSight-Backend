@@ -61,6 +61,46 @@ export default class ForgotPasswordsController {
     }
   }
 
+  async newOtp({ auth, request, response }: HttpContext) {
+    const user = auth.user!
+
+    if (env.get('BYPASS_OTP_VERIFICATION')) {
+      return response.status(400).json(errorResponse('OTP verification is bypassed', 400))
+    }
+
+    try {
+      /**
+       * Create a limiter
+       */
+      const newOtp = limiter.use({
+        requests: 3,
+        duration: '1 min',
+        blockDuration: '20 mins',
+      })
+
+      const key = `otpNewForgot_${request.ip()}_${user.email}`
+
+      if (user.emailVerifiedAt) {
+        return response.status(400).json(errorResponse('Email already verified', 400))
+      }
+
+      await newOtp.penalize(key, async () => {
+        await sendOtp(
+          {
+            fullName: user.fullName,
+            email: user.email,
+          },
+          'forgot-password'
+        )
+      })
+
+      return response.status(200).json(successResponse(null, 'OTP sent successfully', 200))
+    } catch (error) {
+      console.error('Error sending OTP:', error)
+      return response.status(500).json(errorResponse('Failed to send OTP', 500))
+    }
+  }
+
   async verifyOtp({ request, response }: HttpContext) {
     const { email, otp } = await request.validateUsing(otpForgotPasswordValidator)
 
