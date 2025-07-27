@@ -5,6 +5,7 @@ import UserDetail from '#models/user_detail'
 import { scanFaceValidator } from '#validators/scan'
 import type { HttpContext } from '@adonisjs/core/http'
 import router from '@adonisjs/core/services/router'
+import redis from '@adonisjs/redis/services/main'
 
 export default class FacesController {
   async handle({ auth, request, response }: HttpContext) {
@@ -31,6 +32,8 @@ export default class FacesController {
       await UserDetail.query().where('userId', user.id).update({
         skinType: ml.predicted_label,
       })
+
+      await redis.del(`user:face_history:${user.id}`)
 
       return response.status(200).json(successResponse(ml, 'Face scan processed successfully', 200))
     } catch (error) {

@@ -3,6 +3,7 @@ import Product from '#models/product'
 import stringHelpers from '@adonisjs/core/helpers/string'
 import type { HttpContext } from '@adonisjs/core/http'
 import router from '@adonisjs/core/services/router'
+import redis from '@adonisjs/redis/services/main'
 
 export default class ProductsController {
   async all({ auth, request, response }: HttpContext) {
@@ -25,6 +26,15 @@ export default class ProductsController {
       const page = request.input('page', 1)
       const limit = 10
 
+      const cacheKey = `products:all:u${user.id}:s=${sort}&t=${type}&b=${brand}&q=${search}&p=${page}`
+
+      const cached = await redis.get(cacheKey)
+      if (cached) {
+        return response
+          .status(200)
+          .json(successResponse(JSON.parse(cached), 'Recommendations (cached)', 200))
+      }
+
       let query = Product.query()
 
       if (search) {
@@ -44,6 +54,8 @@ export default class ProductsController {
 
       const products = (await query.paginate(page, limit)).toJSON()
 
+      await redis.setex(cacheKey, 60 * 60, JSON.stringify(products))
+
       return response
         .status(200)
         .json(successResponse(products, 'Recommendations fetched successfully', 200))
@@ -54,6 +66,15 @@ export default class ProductsController {
   }
 
   async getTypesAndBrands({ response }: HttpContext) {
+    const cacheKey = 'products:types-brands'
+    const cached = await redis.get(cacheKey)
+
+    if (cached) {
+      return response
+        .status(200)
+        .json(successResponse(JSON.parse(cached), 'Types and brands from cache', 200))
+    }
+
     try {
       const types = await Product.query().distinct('type').orderBy('type', 'asc')
       const brands = await Product.query()
@@ -63,20 +84,20 @@ export default class ProductsController {
         .orderBy('brand', 'asc')
 
       const merged = {
-        types: [...types.map((item) => item.type)],
-        brands: [
-          ...brands.map((item) => {
-            return {
-              name: item.brand,
-              image: router
-                .builder()
-                .params([`${stringHelpers.slug(item.brand.toLowerCase())}.jpg`])
-                .make('brands'),
-              total: item.$extras.total,
-            }
-          }),
-        ],
+        types: types.map((item) => item.type),
+        brands: brands.map((item) => {
+          return {
+            name: item.brand,
+            image: router
+              .builder()
+              .params([`${stringHelpers.slug(item.brand.toLowerCase())}.jpg`])
+              .make('brands'),
+            total: item.$extras.total,
+          }
+        }),
       }
+
+      await redis.setex(cacheKey, 60 * 60 * 6, JSON.stringify(merged)) // 6 jam
 
       return response
         .status(200)

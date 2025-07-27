@@ -5,6 +5,7 @@ import app from '@adonisjs/core/services/app'
 import * as fs from 'node:fs'
 import { cuid } from '@adonisjs/core/helpers'
 import router from '@adonisjs/core/services/router'
+import redis from '@adonisjs/redis/services/main'
 
 export default class UpdateProfilesController {
   async handle({ auth, request, response }: HttpContext) {
@@ -38,7 +39,11 @@ export default class UpdateProfilesController {
         user.profilePicture = router.builder().params([newName]).make('profilePictures')
       }
 
+      const cacheKey = `user:profile:${user.id}`
+      await redis.del(cacheKey)
       await user.save()
+      await user.load('userDetail')
+      await redis.setex(cacheKey, 60 * 60, JSON.stringify(user))
 
       return response.json(successResponse(user, 'Profile updated'))
     } catch (error) {
