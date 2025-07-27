@@ -35,6 +35,8 @@ export default class OcrIngredientsController {
           .json(errorResponse('No ingredients found in the scan image', 400, ml))
       }
 
+      const isSafe = ml.isSafe == 1 ? true : false
+
       const ocr = await ProductOcr.create({
         id: randomUUID(),
         userId: user.id,
@@ -42,7 +44,7 @@ export default class OcrIngredientsController {
         scanImage: router.builder().params([fileName]).make('ingredientsScan'),
         extractedIngredients: ml.extractedIngredients ?? [],
         harmfulIngredientsFound: ml.harmfulIngredientsFound ?? [],
-        isSafe: ml.isSafe,
+        isSafe: isSafe,
         totalHarmfulIngredients: ml.totalHarmfulIngredients,
         skinType: user.userDetail!.skinType,
       })
