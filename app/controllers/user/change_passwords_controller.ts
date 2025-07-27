@@ -2,6 +2,7 @@ import { errorResponse, successResponse, validationErrorResponse } from '#helper
 import { changePasswordValidator } from '#validators/user'
 import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
+import redis from '@adonisjs/redis/services/main'
 
 export default class ChangePasswordsController {
   async handle({ auth, request, response }: HttpContext) {
@@ -40,6 +41,7 @@ export default class ChangePasswordsController {
 
       user.password = await hash.make(newPassword)
       await user.save()
+      await redis.del(`user:profile:${user.id}`)
 
       return response.status(200).json(successResponse(null, 'Password changed successfully', 200))
     } catch (error) {

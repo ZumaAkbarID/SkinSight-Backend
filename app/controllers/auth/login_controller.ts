@@ -2,7 +2,6 @@ import { loginUserValidator } from '#validators/auth'
 import { errorResponse, successResponse, validationErrorResponse } from '#helpers/response'
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
-import env from '#start/env'
 import hash from '@adonisjs/core/services/hash'
 import limiter from '@adonisjs/limiter/services/main'
 
@@ -41,7 +40,7 @@ export default class LoginController {
         }
 
         if (!user.password) {
-          throw new Error('Please login with Google then set a password')
+          throw new Error('Login with google')
         }
 
         const isPasswordValid = hash.verify(user.password, password)
@@ -85,9 +84,20 @@ export default class LoginController {
           .json(validationErrorResponse(error.messages, 'Validation error', 422))
       }
 
-      if (env.get('NODE_ENV') === 'development') {
-        console.error('Login error:', error)
+      if (error.message === 'Invalid credentials') {
+        return response.status(401).json(errorResponse('Invalid email or password', 401))
+      } else if (error.message === 'Login with google') {
+        return response
+          .status(400)
+          .json(
+            errorResponse(
+              'This account is registered with Google. Please login with Google. Then set a password.',
+              400
+            )
+          )
       }
+
+      console.error('Login error:', error)
 
       return response.status(500).json(errorResponse('Internal server error'))
     }
