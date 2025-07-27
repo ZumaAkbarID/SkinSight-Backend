@@ -87,10 +87,6 @@ export default class ForgotPasswordsController {
 
       const key = `otpNewForgot_${request.ip()}_${user.email}`
 
-      if (user.emailVerifiedAt) {
-        return response.status(400).json(errorResponse('Email already verified', 400))
-      }
-
       await newOtp.penalize(key, async () => {
         await sendOtp(
           {
