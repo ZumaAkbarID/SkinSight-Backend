@@ -55,11 +55,14 @@ export async function getCurrentUVIndex(long: string, lat: string) {
           'Accept': 'application/json',
         },
       }),
-      axios.get(`${env.get('API_GEO_URL')}?latitude=${lat}&longitude=${long}&localityLanguage=en`, {
-        headers: {
-          Accept: 'application/json',
-        },
-      }),
+      axios.get(
+        `${env.get('API_GEO_URL')}?latitude=${lat}&longitude=${long}&localityLanguage=en&key=${env.get('API_GEO_KEY')}`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        }
+      ),
     ])
 
     if (apiUVRes.status !== 200) {
@@ -83,11 +86,19 @@ export async function getCurrentUVIndex(long: string, lat: string) {
       },
     }
 
-    const forecast = data.forecast.map((entry: any) => ({
+    let forecast = data.forecast.map((entry: any) => ({
       time: convertToJakartaTime(entry.time),
       uvi: entry.uvi,
       level: classifyUVIndex(entry.uvi),
     }))
+
+    forecast.push(
+      ...data.history.map((entry: any) => ({
+        time: convertToJakartaTime(entry.time),
+        uvi: entry.uvi,
+        level: classifyUVIndex(entry.uvi),
+      }))
+    )
 
     const products = await Product.query().whereIn('type', ['Sunblock', 'Sunscreen'])
 
