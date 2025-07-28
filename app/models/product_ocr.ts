@@ -38,7 +38,7 @@ export default class ProductOcr extends BaseModel {
   })
   declare harmfulIngredientsFound: any[] | null
 
-  @column()
+  @column({ serialize: (value) => (value == 1 ? true : false) })
   declare isSafe: boolean
 
   @column()
