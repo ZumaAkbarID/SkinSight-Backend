@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH (git pull)
+      - name: Deploy via SSH (near zero-downtime)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -17,7 +17,19 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
+            set -e
             cd /home/${{ secrets.VPS_USER }}/apps/SkinSight-Backend
             git checkout main
             git pull origin main
-            docker compose up -d --build
+
+            # 1. Build the new image while the old container keeps serving traffic.
+            docker compose build
+
+            # 2. Make sure backing services are up (no-op if already running).
+            docker compose up -d --wait mysql redis
+
+            # 3. Swap the app container and wait until it is healthy before finishing.
+            docker compose up -d --wait --wait-timeout 120 skinsight_adonis
+
+            # 4. Drop dangling images from previous builds.
+            docker image prune -f

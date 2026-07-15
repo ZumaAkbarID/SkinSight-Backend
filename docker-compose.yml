@@ -4,28 +4,61 @@ services:
     container_name: skinsight_backend
     environment:
       - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3333
+      - DB_HOST=mysql
+      - DB_PORT=3306
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     env_file:
       - .env.production.local
-    ports:
-      - '9090:3333'
     volumes:
       - ./uploads:/app/uploads
     restart: unless-stopped
+    command: sh -c "node ace migration:run --force && node ./bin/server.js"
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3333/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     depends_on:
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - skinsight-net
+
+  mysql:
+    image: mysql:8
+    container_name: skinsight_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
+      - MYSQL_DATABASE=${DB_DATABASE:-app}
+    volumes:
+      - skinsight_mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-p${DB_PASSWORD:-root}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - skinsight-net
 
   redis:
     image: redis:8-alpine
     container_name: skinsight_redis
-    ports:
-      - '6379:6379'
     restart: unless-stopped
+    volumes:
+      - skinsight_redis_data:/data
     networks:
       - skinsight-net
+
+volumes:
+  skinsight_mysql_data:
+  skinsight_redis_data:
 
 networks:
   skinsight-net:
