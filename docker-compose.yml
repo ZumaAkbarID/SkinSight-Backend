@@ -14,6 +14,7 @@ services:
       - .env.production.local
     volumes:
       - ./uploads:/app/uploads
+      - ./database/csv:/app/database/csv
     restart: unless-stopped
     command: sh -c "node ace migration:run --force && node ./bin/server.js"
     healthcheck:
