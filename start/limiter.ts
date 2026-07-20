@@ -16,6 +16,6 @@ export const throttle = limiter.define('global', () => {
   if (env.get('BYPASS_LIMITER')) {
     return limiter.allowRequests(1000).every('1 minute')
   } else {
-    return limiter.allowRequests(10).every('1 minute')
+    return limiter.allowRequests(100).every('1 minute')
   }
 })

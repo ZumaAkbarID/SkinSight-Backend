@@ -79,7 +79,7 @@ export default class ProductsController {
       const types = await Product.query().distinct('type').orderBy('type', 'asc')
       const brands = await Product.query()
         .select('brand')
-        .count('id as total')
+        .count('* as total')
         .groupBy('brand')
         .orderBy('brand', 'asc')
 
